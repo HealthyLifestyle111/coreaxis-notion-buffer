@@ -86,9 +86,13 @@ async function getBufferChannels() {
   return channels;
 }
 
+// Buffer Free is intentionally limited to the three routes approved for this project.
+const BUFFER_PLATFORMS = new Set(["X", "TikTok", "Pinterest"]);
+
 const SERVICE_NAMES = {
-  Instagram: ["instagram"], LinkedIn: ["linkedin"], Facebook: ["facebook"], X: ["twitter", "x"],
-  TikTok: ["tiktok"], "YouTube Shorts": ["youtube"], Pinterest: ["pinterest"],
+  X: ["twitter", "x"],
+  TikTok: ["tiktok"],
+  Pinterest: ["pinterest"],
 };
 
 function channelForPlatform(channels, platform) {
@@ -192,15 +196,21 @@ async function markError(pageId, message, postIds = []) {
   await updatePage(pageId, properties);
 }
 
-async function markUnconnected(pageId, platforms) {
+function nativeRoute(platforms) {
+  return platforms.every((platform) => platform === "YouTube Shorts")
+    ? "External Video Route"
+    : "CoreAxis Native";
+}
+
+async function markOutsideBuffer(pageId, platforms) {
   const names = platforms.join(", ");
   await updatePage(pageId, {
     "Send to Buffer": { checkbox: false },
     "CoreAxis Automation Status": { select: { name: "Not Sent" } },
-    "Publishing Status": { select: { name: "Draft" } },
-    "Distribution Route": { select: { name: "Manual Review Only" } },
+    "Publishing Status": { select: { name: "Ready" } },
+    "Distribution Route": { select: { name: nativeRoute(platforms) } },
     "Buffer Channel IDs": { rich_text: [] },
-    "Buffer Error": { rich_text: [{ text: { content: `Buffer channel not connected for ${names}; approved content and production media are preserved.` } }] },
+    "Buffer Error": { rich_text: [{ text: { content: `Correctly routed outside Buffer: ${names}. Use the approved native scheduler defined in the publishing route matrix.` } }] },
   });
 }
 
@@ -216,18 +226,22 @@ async function main() {
     const text = textValue(p["Full Copy"]);
     const format = optionName(p["Format"]);
     const platforms = selectedPlatforms(p["Platform"]).filter((platform) => platform !== "Email");
+    const outsideBuffer = platforms.filter((platform) => !BUFFER_PLATFORMS.has(platform));
     const dueAt = scheduledAt(p);
     const postIds = [];
     const channelIds = [];
     try {
       if (!text.trim()) throw new Error("Full Copy is empty.");
-      if (!platforms.length) throw new Error("No Buffer-supported Platform is selected.");
+      if (!platforms.length) throw new Error("No platform is selected.");
       if (format === "Engagement Block") throw new Error("Engagement blocks are native actions, not scheduled posts.");
+      if (outsideBuffer.length) {
+        await markOutsideBuffer(page.id, outsideBuffer);
+        console.warn(`[SYNC] Routed "${title}" outside Buffer for ${outsideBuffer.join(", ")}.`);
+        continue;
+      }
       const missingPlatforms = platforms.filter((platform) => !channelForPlatform(channels, platform));
       if (missingPlatforms.length) {
-        await markUnconnected(page.id, missingPlatforms);
-        console.warn(`[SYNC] Skipped "${title}": no connected Buffer channel for ${missingPlatforms.join(", ")}.`);
-        continue;
+        throw new Error(`Approved Buffer route is not active for ${missingPlatforms.join(", ")}.`);
       }
       const assets = await mediaAssets(p);
       for (const platform of platforms) {
