@@ -1,7 +1,7 @@
 import { Client } from "@notionhq/client";
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || "252649c1-4370-4cbc-9f08-7c708f0d970c";
+const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || "2fc38cda2cba491cb090d4f09d0ec1d2";
 const BUFFER_API_KEY = process.env.BUFFER_API_KEY;
 const BUFFER_API_URL = "https://api.buffer.com";
 
