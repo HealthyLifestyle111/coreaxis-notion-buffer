@@ -1,11 +1,5 @@
 name: Monday Launch Once
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'scripts/launch-monday-once.mjs'
-      - '.github/workflows/monday-launch-once.yml'
   workflow_dispatch:
 jobs:
   publish:
