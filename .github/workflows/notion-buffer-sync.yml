@@ -17,5 +17,5 @@ jobs:
       - run: node scripts/notion-buffer-sync.mjs
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID || '252649c1-4370-4cbc-9f08-7c708f0d970c' }}
+          NOTION_DATABASE_ID: '252649c1-4370-4cbc-9f08-7c708f0d970c'
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
