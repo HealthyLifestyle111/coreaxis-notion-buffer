@@ -38,3 +38,4 @@ jobs:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
           LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
+# Launch verification trigger: 2026-07-19
