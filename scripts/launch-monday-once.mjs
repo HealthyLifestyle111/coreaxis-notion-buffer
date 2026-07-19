@@ -66,7 +66,7 @@ const records = [
     "media": "https://coreaxis-launch-review.jennalwill.chatgpt.site/media/launch-monday/story.json",
     "text": "What changed first? What affects your day most? What do you want to protect next? Your pattern is the beginning. Take the 90-second assessment."
   }
-];
+].filter((record) => record.platform === "TikTok");
 
 async function gql(query, variables = {}) {
   const response = await fetch(API, {method:"POST",headers:{Authorization:`Bearer ${KEY}`,"Content-Type":"application/json"},body:JSON.stringify({query,variables})});
@@ -105,7 +105,7 @@ function metadata(record) {
   if (record.platform === "X") return {twitter:{thread:splitThread(record.text).map(text => ({text}))}};
   if (record.platform === "Instagram") return {instagram:{type:record.format === "Story" ? "story" : record.format === "Reel" ? "reel" : "post",shouldShareToFeed:record.format === "Reel",isAiGenerated:true}};
   if (record.platform === "Facebook") return {facebook:{type:record.format === "Reel" ? "reel" : "post"}};
-  if (record.platform === "TikTok") return {tiktok:{type:"post",isAiGenerated:true}};
+  if (record.platform === "TikTok") return {tiktok:{isAiGenerated:true}};
   if (record.platform === "YouTube Shorts") return {youtube:{title:record.title.slice(0,100),privacy:"public",categoryId:"27",madeForKids:false,isAiGenerated:true}};
 }
 async function create(record, channel) {
