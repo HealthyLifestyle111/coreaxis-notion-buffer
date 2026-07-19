@@ -1,27 +1,19 @@
 name: Notion Buffer Sync
-
 on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
-
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install sync dependencies
-        run: npm install --no-save @notionhq/client node-fetch
-
-      - name: Run Notion to Buffer sync
+      - run: npm ci
+      - run: node scripts/notion-buffer-sync.mjs
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID || '252649c1-4370-4cbc-9f08-7c708f0d970c' }}
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
-        run: node scripts/notion-buffer-sync.mjs
