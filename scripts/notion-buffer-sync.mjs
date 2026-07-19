@@ -134,7 +134,7 @@ function metadataFor(platform, format, text, title) {
     return { instagram: { type: f === "story" ? "story" : f === "reel" ? "reel" : "post", shouldShareToFeed: f === "reel", isAiGenerated: true } };
   }
   if (platform === "Facebook") return { facebook: { type: f === "story" ? "story" : f === "reel" ? "reel" : "post" } };
-  if (platform === "TikTok") return { tiktok: { type: "post", isAiGenerated: true } };
+  if (platform === "TikTok") return { tiktok: { isAiGenerated: true } };
   if (platform === "YouTube Shorts") return { youtube: { title: title.slice(0, 100), privacy: "public", categoryId: "27", madeForKids: false, isAiGenerated: true } };
   return undefined;
 }
