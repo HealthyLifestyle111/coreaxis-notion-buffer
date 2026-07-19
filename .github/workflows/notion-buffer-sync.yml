@@ -1,8 +1,19 @@
 name: Notion Buffer Sync
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/notion-buffer-sync.mjs'
+      - '.github/workflows/notion-buffer-sync.yml'
+      - 'package.json'
+      - 'package-lock.json'
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
+concurrency:
+  group: notion-buffer-sync
+  cancel-in-progress: false
 jobs:
   sync:
     runs-on: ubuntu-latest
