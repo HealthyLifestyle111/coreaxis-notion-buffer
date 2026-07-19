@@ -6,6 +6,8 @@ on:
     paths:
       - 'scripts/buffer-diagnostic.mjs'
       - '.github/workflows/buffer-diagnostic.yml'
+  schedule:
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 jobs:
   diagnose:
