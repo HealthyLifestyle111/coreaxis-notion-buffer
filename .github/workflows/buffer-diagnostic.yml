@@ -1,0 +1,22 @@
+name: Buffer Channel Diagnostic
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/buffer-diagnostic.mjs'
+      - '.github/workflows/buffer-diagnostic.yml'
+  workflow_dispatch:
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - run: node scripts/buffer-diagnostic.mjs
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
