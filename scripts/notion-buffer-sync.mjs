@@ -171,8 +171,9 @@ async function updatePage(pageId, properties) {
   await notion.pages.update({ page_id: pageId, properties });
 }
 
-async function markSynced(pageId, postIds) {
+async function markSynced(pageId, postIds, channelIds) {
   await updatePage(pageId, {
+    "Buffer Channel IDs": { rich_text: [{ text: { content: channelIds.join(", ") } }] },
     "Buffer Post IDs": { rich_text: [{ text: { content: postIds.join(", ") } }] },
     "Scheduler ID": { rich_text: [{ text: { content: postIds.join(", ") } }] },
     "CoreAxis Automation Status": { select: { name: "Synced" } },
@@ -191,6 +192,18 @@ async function markError(pageId, message, postIds = []) {
   await updatePage(pageId, properties);
 }
 
+async function markUnconnected(pageId, platforms) {
+  const names = platforms.join(", ");
+  await updatePage(pageId, {
+    "Send to Buffer": { checkbox: false },
+    "CoreAxis Automation Status": { select: { name: "Not Sent" } },
+    "Publishing Status": { select: { name: "Draft" } },
+    "Distribution Route": { select: { name: "Manual Review Only" } },
+    "Buffer Channel IDs": { rich_text: [] },
+    "Buffer Error": { rich_text: [{ text: { content: `Buffer channel not connected for ${names}; approved content and production media are preserved.` } }] },
+  });
+}
+
 async function main() {
   console.log("[INIT] Starting approved Notion → Buffer sync");
   const records = await getReadyPages();
@@ -205,21 +218,28 @@ async function main() {
     const platforms = selectedPlatforms(p["Platform"]).filter((platform) => platform !== "Email");
     const dueAt = scheduledAt(p);
     const postIds = [];
+    const channelIds = [];
     try {
       if (!text.trim()) throw new Error("Full Copy is empty.");
       if (!platforms.length) throw new Error("No Buffer-supported Platform is selected.");
       if (format === "Engagement Block") throw new Error("Engagement blocks are native actions, not scheduled posts.");
+      const missingPlatforms = platforms.filter((platform) => !channelForPlatform(channels, platform));
+      if (missingPlatforms.length) {
+        await markUnconnected(page.id, missingPlatforms);
+        console.warn(`[SYNC] Skipped "${title}": no connected Buffer channel for ${missingPlatforms.join(", ")}.`);
+        continue;
+      }
       const assets = await mediaAssets(p);
       for (const platform of platforms) {
         const channel = channelForPlatform(channels, platform);
-        if (!channel) throw new Error(`No connected Buffer channel found for ${platform}.`);
         if (["Instagram", "TikTok", "YouTube Shorts", "Pinterest"].includes(platform) && !assets.length) {
           throw new Error(`${platform} requires a public Buffer Media URL.`);
         }
         const postId = await createBufferPost({ channelId: channel.id, platform, format, text, title, dueAt, assets });
         postIds.push(`${platform}:${postId}`);
+        channelIds.push(`${platform}:${channel.id}`);
       }
-      await markSynced(page.id, postIds);
+      await markSynced(page.id, postIds, channelIds);
       console.log(`[SYNC] Queued "${title}" for ${platforms.join(", ")}`);
     } catch (error) {
       failedRecords += 1;
