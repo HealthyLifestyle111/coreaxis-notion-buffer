@@ -1,0 +1,10 @@
+{
+  "workflow": "Notion Native Social Sync",
+  "outcome": "success",
+  "run_id": "29701612740",
+  "run_attempt": "1",
+  "event": "push",
+  "commit_sha": "dbeebe1613e3a34c683886cb7788f1e8f9a04feb",
+  "completed_at_utc": "2026-07-19T19:58:15.470858+00:00",
+  "log_tail": "[NATIVE] 0 due native record(s)\n"
+}
