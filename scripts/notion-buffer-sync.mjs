@@ -67,6 +67,7 @@ function isApprovedAndReady(page) {
     checked(properties["Jenna Approved"]) &&
     checked(properties["Publish Ready"]) &&
     checked(properties["Send to Buffer"]) &&
+    optionName(properties["Compliance Check"]) === "Cleared" &&
     optionName(properties["CoreAxis Automation Status"]) === "Ready"
   );
 }
@@ -85,7 +86,7 @@ async function getReadyPages() {
   } while (start_cursor);
 
   const ready = pages.filter(isApprovedAndReady);
-  console.log(`[NOTION] ${ready.length} approved and ready record(s)`);
+  console.log(`[NOTION] ${ready.length} approved, compliance-cleared, and ready record(s)`);
   return ready;
 }
 
