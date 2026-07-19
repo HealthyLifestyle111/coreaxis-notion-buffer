@@ -1,0 +1,22 @@
+name: Monday Launch Once
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/launch-monday-once.mjs'
+      - '.github/workflows/monday-launch-once.yml'
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - run: node scripts/launch-monday-once.mjs
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
