@@ -1,8 +1,9 @@
 {
   "name": "coreaxis-notion-buffer",
   "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "sync": "node scripts/notion-buffer-sync.mjs"
+  "type": "module",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "node-fetch": "^3.3.2"
   }
 }
