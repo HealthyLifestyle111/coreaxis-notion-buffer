@@ -1,81 +1,62 @@
-# CoreAxis Notion to Buffer Automation
+# CoreAxis Notion Publishing Automation
 
-This repository now uses GitHub Actions to sync approved Notion rows to Buffer every five minutes.
+This repository publishes approved Notion records through two deliberate routes.
 
-## What it does
+## Route 1 — Buffer Free
 
-The workflow runs on a cron schedule and also supports manual runs through the Actions UI. It queries the Notion data source:
+Buffer is limited to the three approved active channels:
 
-- 252649c1-4370-4cbc-9f08-7c708f0d970c
+- X
+- TikTok
+- Pinterest
 
-A row is sent to Buffer only when all of these are true:
+Workflow: `.github/workflows/notion-buffer-sync.yml`
 
-- Send to Buffer is checked
-- Jenna Approved is checked
-- Publish Ready is checked
-- Status is Approved
+## Route 2 — native publishers
 
-The automation uses:
+The native workflow publishes directly to:
 
-- Meta Safe Copy as the primary caption
-- Full Copy as the fallback caption
-- Buffer Publish At as the primary scheduled date and time
-- Scheduled Time as the first fallback
-- Date as the second fallback
-- Buffer Channel IDs as the destination channels
-- Buffer Media URL as the image or video
+- Instagram and Facebook through the Meta Graph API
+- YouTube through the YouTube Data API
+- LinkedIn through the LinkedIn Posts API
 
-After Buffer accepts a post, Notion is updated automatically:
+Workflow: `.github/workflows/notion-native-social-sync.yml`
 
-- Buffer Post IDs receives the Buffer post IDs
-- Scheduler ID receives the Buffer post IDs
-- Publishing Status becomes Queued
-- Status becomes Scheduled
-- CoreAxis Automation Status becomes Synced
-- Send to Buffer is unchecked to prevent duplicate posts
+The workflow runs every five minutes. A native record is eligible only when it is approved, compliance-cleared, publish-ready, marked Ready, not assigned to Buffer, due within four minutes or overdue by less than 24 hours, and has no existing scheduler or external post ID. Missing credentials leave the record Ready; they do not create a false failure. Successful publication writes the platform ID, public URL, and publication time back to Notion and prevents duplicates.
 
-Failures are written to:
+## Existing required secrets
 
-- Buffer Error
-- Publishing Error
+- `NOTION_TOKEN`
+- `BUFFER_API_KEY`
 
-## Required GitHub secrets
+## Meta authorization secrets
 
-Add these encrypted secrets in the repository Actions settings:
+- `META_ACCESS_TOKEN` — Page-capable access token with Facebook Page and Instagram content publishing permissions
+- `META_PAGE_ID` — Facebook Page numeric ID
+- `META_IG_USER_ID` — connected Instagram professional account numeric ID
 
-- BUFFER_API_KEY
-- NOTION_TOKEN
+Optional repository variable: `META_GRAPH_VERSION` (defaults to `v23.0`).
 
-## Required Notion properties
+## YouTube authorization secrets
 
-The database must contain:
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REFRESH_TOKEN`
 
-- Full Copy
-- Meta Safe Copy
-- Search Keywords
-- Buffer Media URL
-- Buffer Publish At
-- Scheduled Time
-- Date
-- Buffer Channel IDs
-- Buffer Post IDs
-- Scheduler ID
-- Buffer Error
-- Publishing Error
-- CoreAxis Automation Status
-- Publishing Status
-- Status
-- Send to Buffer
-- Jenna Approved
-- Publish Ready
-- Format
+The Google authorization must include `https://www.googleapis.com/auth/youtube.upload`.
 
-## Local validation
+## LinkedIn authorization secrets
 
-Run:
+- `LINKEDIN_ACCESS_TOKEN`
+- `LINKEDIN_AUTHOR_URN` — for example `urn:li:person:...` or `urn:li:organization:...`
 
-```bash
-node scripts/notion-buffer-sync.mjs
-```
+The LinkedIn application needs the appropriate member or organization publishing permission. Optional repository variable: `LINKEDIN_VERSION` (defaults to `202606`).
 
-This requires the same secrets to be available in your shell environment.
+## Safety controls
+
+- Notion remains the approval gate.
+- X, TikTok, and Pinterest are the only Buffer platforms.
+- Native records cannot enter the Buffer workflow.
+- Records with an existing external post ID or scheduler ID are never republished.
+- Unauthenticated platforms are skipped and remain Ready.
+- Platform errors are written to `Publishing Error`.
