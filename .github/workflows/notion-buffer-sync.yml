@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install sync dependencies
+        run: npm install --no-save @notionhq/client node-fetch
+
       - name: Run Notion to Buffer sync
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
