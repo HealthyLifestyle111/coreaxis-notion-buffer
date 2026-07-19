@@ -1,0 +1,10 @@
+{
+  "workflow": "Notion Buffer Sync",
+  "outcome": "failure",
+  "run_id": "29701604273",
+  "run_attempt": "1",
+  "event": "push",
+  "commit_sha": "aaac56490a016927eba8a255306a8359f31f73fb",
+  "completed_at_utc": "2026-07-19T19:57:59.763327+00:00",
+  "log_tail": "[FATAL] NOTION_TOKEN and BUFFER_API_KEY must both be set.\n"
+}
