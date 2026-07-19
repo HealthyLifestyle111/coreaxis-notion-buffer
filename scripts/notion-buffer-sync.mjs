@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const NOTION_VERSION = '2026-03-11';
-const BUFFER_ENDPOINT = 'https://api.buffer.com';
+const BUFFER_ENDPOINT = 'https://api.buffer.com/graphql';
 const DATA_SOURCE_ID = '252649c1-4370-4cbc-9f08-7c708f0d970c';
 
 const notionToken = process.env.NOTION_TOKEN;
@@ -38,12 +38,16 @@ async function main() {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
 
-      await updateNotionPage(page.id, {
-        'Buffer Error': richText(message.slice(0, 1900)),
-        'Publishing Error': richText(message.slice(0, 1900)),
-        'CoreAxis Automation Status': select('Error'),
-        'Publishing Status': select('Failed')
-      });
+      try {
+        await updateNotionPage(page.id, {
+          'Buffer Error': richText(message.slice(0, 1900)),
+          'Publishing Error': richText(message.slice(0, 1900)),
+          'CoreAxis Automation Status': select('Error'),
+          'Publishing Status': select('Failed')
+        });
+      } catch (e) {
+        console.error('Failed updating Notion with error info:', e instanceof Error ? e.message : e);
+      }
 
       results.push({
         pageId: page.id,
@@ -64,7 +68,7 @@ async function main() {
 
 async function queryReadyPages() {
   const response = await fetch(
-    `https://api.notion.com/v1/data_sources/${DATA_SOURCE_ID}/query`,
+    `https://api.notion.com/v1/databases/${DATA_SOURCE_ID}/query`,
     {
       method: 'POST',
       headers: notionHeaders(),
@@ -108,18 +112,18 @@ async function queryReadyPages() {
 
   const data = await response.json();
 
-  return data.results.filter((page) => !text(page.properties['Buffer Post IDs']));
+  return (data.results || []).filter((page) => !text(page.properties && page.properties['Buffer Post IDs']));
 }
 
 async function schedulePage(page) {
-  const properties = page.properties;
+  const properties = page.properties || {};
   const copy = text(properties['Meta Safe Copy']) || text(properties['Full Copy']);
 
   if (!copy) {
     throw new Error('No post copy found in Meta Safe Copy or Full Copy.');
   }
 
-  const keywordText = text(properties['Search Keywords']);
+  const keywordText = text(properties['Search Keywords'] || {});
   const hashtags = keywordText.includes('#') ? keywordText : '';
   const postText = [copy.trim(), hashtags.trim()].filter(Boolean).join('\n\n');
 
@@ -132,8 +136,8 @@ async function schedulePage(page) {
     throw new Error('No Buffer Publish At, Scheduled Time, or Date value found.');
   }
 
-  const channelIds = text(properties['Buffer Channel IDs'])
-    .split(/[\n,]/)
+  const channelIds = (text(properties['Buffer Channel IDs']) || '')
+    .split(/[,\n]/)
     .map((value) => value.trim())
     .filter(Boolean);
 
@@ -142,7 +146,7 @@ async function schedulePage(page) {
   }
 
   const mediaUrl = urlValue(properties['Buffer Media URL']);
-  const format = selectValue(properties['Format']);
+  const format = selectValue(properties['Format'] || {});
   const assetType = mediaUrl ? inferAssetType(mediaUrl, format) : null;
   const postIds = [];
 
@@ -211,7 +215,7 @@ async function createBufferPost({ channelId, text, dueAt, mediaUrl, assetType })
   };
 
   const data = await bufferGraphQL(query, { input });
-  const result = data?.data?.createPost;
+  const result = data && data.data && data.data.createPost;
 
   if (!result) {
     throw new Error(`Buffer returned no createPost result: ${JSON.stringify(data)}`);
@@ -221,7 +225,7 @@ async function createBufferPost({ channelId, text, dueAt, mediaUrl, assetType })
     throw new Error(`Buffer error: ${result.message}`);
   }
 
-  if (!result.post?.id) {
+  if (!result.post || !result.post.id) {
     throw new Error(`Buffer post ID missing: ${JSON.stringify(result)}`);
   }
 
@@ -247,9 +251,14 @@ async function bufferGraphQL(query, variables = {}) {
     throw new Error(`Buffer HTTP ${response.status}: ${body}`);
   }
 
-  const data = JSON.parse(body);
+  let data;
+  try {
+    data = JSON.parse(body);
+  } catch (e) {
+    throw new Error(`Failed to parse Buffer response as JSON: ${e.message} - ${body}`);
+  }
 
-  if (data.errors?.length) {
+  if (data && data.errors && data.errors.length) {
     throw new Error(`Buffer GraphQL: ${data.errors.map((error) => error.message).join('; ')}`);
   }
 
@@ -281,25 +290,23 @@ function text(property) {
     return '';
   }
 
-  if (property.type === 'title' || property.type === 'rich_text') {
-    return property[property.type]
-      .map((item) => item.plain_text)
-      .join('');
+  if ((property.type === 'title' || property.type === 'rich_text') && Array.isArray(property[property.type])) {
+    return property[property.type].map((item) => item.plain_text || '').join('');
   }
 
   if (property.type === 'select') {
-    return property.select?.name || '';
+    return property.select && property.select.name ? property.select.name : '';
   }
 
   if (property.type === 'formula') {
-    return property.formula?.string || '';
+    return property.formula && property.formula.string ? property.formula.string : '';
   }
 
   return '';
 }
 
 function dateStart(property) {
-  return property?.date?.start || '';
+  return property && property.date && property.date.start ? property.date.start : '';
 }
 
 function urlValue(property) {
@@ -311,20 +318,20 @@ function urlValue(property) {
     return property.url || '';
   }
 
-  if (property.type === 'rich_text') {
-    return property.rich_text.map((item) => item.plain_text).join('').trim();
+  if (property.type === 'rich_text' && Array.isArray(property.rich_text)) {
+    return property.rich_text.map((item) => item.plain_text || '').join('').trim();
   }
 
   return '';
 }
 
 function selectValue(property) {
-  return property?.select?.name || '';
+  return property && property.select && property.select.name ? property.select.name : '';
 }
 
 function inferAssetType(mediaUrl, format) {
-  const normalizedUrl = mediaUrl.toLowerCase();
-  const normalizedFormat = format.toLowerCase();
+  const normalizedUrl = (mediaUrl || '').toLowerCase();
+  const normalizedFormat = (format || '').toLowerCase();
 
   if (normalizedFormat.includes('video') || normalizedUrl.includes('.mp4') || normalizedUrl.includes('video')) {
     return 'video';
