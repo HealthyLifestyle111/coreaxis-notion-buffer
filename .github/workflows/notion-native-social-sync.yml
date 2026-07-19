@@ -81,4 +81,4 @@ jobs:
       - name: Fail workflow when sync failed
         if: steps.native_sync.outcome == 'failure'
         run: exit 1
-# Immediate launch eligibility trigger: 2026-07-19T20:42Z
+# Immediate rerun trigger after rejected attempt: 2026-07-19T21:00Z
