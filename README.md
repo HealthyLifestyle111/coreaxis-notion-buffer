@@ -1,12 +1,14 @@
 # CoreAxis Notion to Buffer Automation
 
-This project is the publishing bridge between the CoreAxis Notion content calendar and Buffer.
+This repository now uses GitHub Actions to sync approved Notion rows to Buffer every five minutes.
 
-Every five minutes, it checks the Notion database called:
+## What it does
 
-Content Calendar + Approval Queue
+The workflow runs on a cron schedule and also supports manual runs through the Actions UI. It queries the Notion data source:
 
-A row is sent to Buffer only when all four conditions are true:
+- 252649c1-4370-4cbc-9f08-7c708f0d970c
+
+A row is sent to Buffer only when all of these are true:
 
 - Send to Buffer is checked
 - Jenna Approved is checked
@@ -17,12 +19,11 @@ The automation uses:
 
 - Meta Safe Copy as the primary caption
 - Full Copy as the fallback caption
-- Search Keywords as hashtags when the field contains #
-- Buffer Media URL as the image or video
 - Buffer Publish At as the primary scheduled date and time
 - Scheduled Time as the first fallback
 - Date as the second fallback
 - Buffer Channel IDs as the destination channels
+- Buffer Media URL as the image or video
 
 After Buffer accepts a post, Notion is updated automatically:
 
@@ -38,27 +39,15 @@ Failures are written to:
 - Buffer Error
 - Publishing Error
 
-## Required secrets
+## Required GitHub secrets
 
-The Cloudflare Worker requires these secrets:
+Add these encrypted secrets in the repository Actions settings:
 
 - BUFFER_API_KEY
 - NOTION_TOKEN
-- ADMIN_KEY
-
-Never place these values inside the source code or commit them to GitHub.
-
-## Deploy
-
-Run:
-
-```bash
-npm install
-npx wrangler deploy
-```
-Or connect this GitHub repository to Cloudflare Workers through Import from Git.
 
 ## Required Notion properties
+
 The database must contain:
 
 - Full Copy
@@ -81,32 +70,12 @@ The database must contain:
 - Publish Ready
 - Format
 
-## Health check
-After deployment, open:
+## Local validation
 
-```
-https://YOUR-WORKER.workers.dev/health
-```
+Run:
 
-## Manual run
-Send a POST request to:
-
-```
-https://YOUR-WORKER.workers.dev/run
-```
-with this request header:
-
-```
-x-coreaxis-key: YOUR_ADMIN_KEY
+```bash
+node scripts/notion-buffer-sync.mjs
 ```
 
-## Final required actions
-After creating the files:
-
-1. Install dependencies.
-2. Check the JavaScript for syntax errors.
-3. Commit all files to the repository.
-4. Push the commit to the default branch.
-5. Report exactly which files were created.
-6. Report the commit hash.
-7. Do not claim the Worker is deployed unless deployment was actually completed.
+This requires the same secrets to be available in your shell environment.
