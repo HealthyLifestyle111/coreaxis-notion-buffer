@@ -33,6 +33,10 @@ jobs:
       - name: Run Notion Buffer sync
         id: buffer_sync
         continue-on-error: true
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: |
           set -o pipefail
           node scripts/notion-buffer-sync.mjs 2>&1 | tee /tmp/notion-buffer-sync.log
