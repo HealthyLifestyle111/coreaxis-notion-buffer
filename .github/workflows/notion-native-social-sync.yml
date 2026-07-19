@@ -9,6 +9,9 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: notion-native-social-sync
   cancel-in-progress: false
@@ -24,7 +27,12 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci
-      - run: node scripts/notion-native-social-sync.mjs
+      - name: Run native social sync
+        id: native_sync
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node scripts/notion-native-social-sync.mjs 2>&1 | tee /tmp/notion-native-social-sync.log
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
@@ -38,4 +46,38 @@ jobs:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
           LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
-# Launch verification trigger: 2026-07-19
+      - name: Persist workflow outcome
+        if: always()
+        env:
+          STEP_OUTCOME: ${{ steps.native_sync.outcome }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          mkdir -p status
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          log = Path('/tmp/notion-native-social-sync.log').read_text(errors='replace') if Path('/tmp/notion-native-social-sync.log').exists() else ''
+          payload = {
+              'workflow': 'Notion Native Social Sync',
+              'outcome': os.environ.get('STEP_OUTCOME', 'unknown'),
+              'run_id': os.environ.get('RUN_ID'),
+              'run_attempt': os.environ.get('RUN_ATTEMPT'),
+              'event': os.environ.get('EVENT_NAME'),
+              'commit_sha': os.environ.get('COMMIT_SHA'),
+              'completed_at_utc': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
+              'log_tail': log[-12000:],
+          }
+          Path('status/notion-native-social-sync-latest.json').write_text(json.dumps(payload, indent=2))
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase origin main
+          git add status/notion-native-social-sync-latest.json
+          git diff --cached --quiet || git commit -m "status: record latest native sync outcome [skip ci]"
+          git push origin HEAD:main
+      - name: Fail workflow when sync failed
+        if: steps.native_sync.outcome == 'failure'
+        run: exit 1
