@@ -1,9 +1,10 @@
-name: Notion Buffer Sync
+name: Notion Publishing Gate + Buffer Sync
 on:
   push:
     branches:
       - main
     paths:
+      - 'scripts/validate-publishing-records.mjs'
       - 'scripts/notion-buffer-sync.mjs'
       - '.github/workflows/notion-buffer-sync.yml'
       - 'package.json'
@@ -28,7 +29,12 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci
-      - name: Run Notion Buffer sync
+      - name: Validate every active publishing record
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
+        run: node scripts/validate-publishing-records.mjs
+      - name: Publish validated Buffer routes
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
