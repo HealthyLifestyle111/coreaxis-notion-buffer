@@ -12,9 +12,6 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 concurrency:
   group: notion-buffer-sync
   cancel-in-progress: false
@@ -22,6 +19,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
         with:
@@ -31,47 +29,8 @@ jobs:
           node-version: '24'
       - run: npm ci
       - name: Run Notion Buffer sync
-        id: buffer_sync
-        continue-on-error: true
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
-        run: |
-          set -o pipefail
-          node scripts/notion-buffer-sync.mjs 2>&1 | tee /tmp/notion-buffer-sync.log
-      - name: Persist workflow outcome
-        if: always()
-        env:
-          STEP_OUTCOME: ${{ steps.buffer_sync.outcome }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          EVENT_NAME: ${{ github.event_name }}
-          COMMIT_SHA: ${{ github.sha }}
-        run: |
-          mkdir -p status
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          log = Path('/tmp/notion-buffer-sync.log').read_text(errors='replace') if Path('/tmp/notion-buffer-sync.log').exists() else ''
-          payload = {
-              'workflow': 'Notion Buffer Sync',
-              'outcome': os.environ.get('STEP_OUTCOME', 'unknown'),
-              'run_id': os.environ.get('RUN_ID'),
-              'run_attempt': os.environ.get('RUN_ATTEMPT'),
-              'event': os.environ.get('EVENT_NAME'),
-              'commit_sha': os.environ.get('COMMIT_SHA'),
-              'completed_at_utc': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
-              'log_tail': log[-12000:],
-          }
-          Path('status/notion-buffer-sync-latest.json').write_text(json.dumps(payload, indent=2))
-          PY
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git pull --rebase origin main
-          git add status/notion-buffer-sync-latest.json
-          git diff --cached --quiet || git commit -m "status: record latest Buffer sync outcome [skip ci]"
-          git push origin HEAD:main
-      - name: Fail workflow when sync failed
-        if: steps.buffer_sync.outcome == 'failure'
-        run: exit 1
+        run: node scripts/notion-buffer-sync.mjs
