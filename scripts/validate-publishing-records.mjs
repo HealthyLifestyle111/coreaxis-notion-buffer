@@ -61,6 +61,7 @@ function validate(page) {
   const status = optionName(p["Status"]);
   const publishingStatus = optionName(p["Publishing Status"]);
   const automationStatus = optionName(p["CoreAxis Automation Status"]);
+  const route = optionName(p["Distribution Route"]) || textValue(p["Distribution Route"]);
   const scheduled = dateValue(p["Scheduled Time"]) || dateValue(p["Buffer Publish At"]) || dateValue(p["Date"]);
   const utm = urlValue(p["UTM Link"]) || textValue(p["UTM Link"]);
   const media = urlValue(p["Buffer Media URL"]);
@@ -71,17 +72,21 @@ function validate(page) {
   const disclosureRequired = checked(p["Affiliate Disclosure"]) || checked(p["Prescription Drug Risk"]) || checked(p["Medical Claim Risk"]);
   const errors = [];
 
-  if (!copy) errors.push("Full Copy is empty");
+  const isManual = /manual/i.test(route) || selectedPlatforms.every((name) => name === "Facebook");
+  const isMetricool = /metricool|external video/i.test(route) || selectedPlatforms.some((name) => ["Instagram", "TikTok", "YouTube", "YouTube Shorts"].includes(name));
+  const isBuffer = !isManual && !isMetricool;
+
+  if (!copy && format !== "Story") errors.push("Full Copy is empty");
   if (!selectedPlatforms.length) errors.push("No social platform is selected");
   if (!scheduled || !futureOrToday(scheduled)) errors.push("No current/future Pulse publication time is set");
   if (!cta) errors.push("Primary CTA is missing");
   if (!containsUrl(copy) && !containsUrl(utm) && !/link in bio/i.test(copy)) errors.push("No destination path exists in copy or UTM Link");
   if (/PENDING|PLACEHOLDER|TBD|\{\{|\[insert/i.test(`${copy} ${utm} ${ctaAlignment}`)) errors.push("Placeholder or pending destination remains");
 
-  const hashtagPlatforms = selectedPlatforms.filter((name) => ["Instagram", "TikTok", "Facebook", "Pinterest", "YouTube Shorts"].includes(name));
-  if (hashtagPlatforms.length && !containsHashtag(copy)) errors.push(`Platform hashtags missing for ${hashtagPlatforms.join(", ")}`);
+  const hashtagPlatforms = selectedPlatforms.filter((name) => ["Instagram", "TikTok", "Facebook", "Pinterest", "YouTube", "YouTube Shorts"].includes(name));
+  if (hashtagPlatforms.length && format !== "Story" && !containsHashtag(copy)) errors.push(`Platform hashtags missing for ${hashtagPlatforms.join(", ")}`);
 
-  const mediaPlatforms = selectedPlatforms.filter((name) => ["Instagram", "TikTok", "Pinterest", "YouTube Shorts"].includes(name));
+  const mediaPlatforms = selectedPlatforms.filter((name) => ["Instagram", "TikTok", "Pinterest", "YouTube", "YouTube Shorts"].includes(name));
   if (mediaPlatforms.length && !media) errors.push(`Public media URL missing for ${mediaPlatforms.join(", ")}`);
 
   if (selectedPlatforms.includes("Instagram")) {
@@ -101,7 +106,7 @@ function validate(page) {
   }
 
   if (["Scheduled", "Published"].includes(status) || ["Queued", "Published"].includes(publishingStatus) || automationStatus === "Synced") {
-    if (!schedulerId) errors.push("Record claims scheduled/synced without a Scheduler ID");
+    if (!schedulerId && !isManual) errors.push("Record claims scheduled/synced without a Scheduler ID");
   }
 
   if (!checked(p["Jenna Approved"])) errors.push("Jenna Approved is not checked");
@@ -110,7 +115,7 @@ function validate(page) {
   if (optionName(p["Affirmative Framing Review"]) !== "Meets Standard") errors.push("Affirmative Framing Review is incomplete");
   if (optionName(p["Scope Separation Review"]) !== "Meets Standard") errors.push("Scope Separation Review is incomplete");
 
-  return { title, errors };
+  return { title, errors, route: isManual ? "manual" : isMetricool ? "metricool" : isBuffer ? "buffer" : "unknown" };
 }
 
 async function allPages() {
@@ -153,11 +158,11 @@ async function main() {
   for (const page of candidates) {
     const result = validate(page);
     if (!result.errors.length) {
-      console.log(`[PASS] ${result.title}`);
+      console.log(`[PASS:${result.route}] ${result.title}`);
       continue;
     }
     failed += 1;
-    console.error(`[FAIL] ${result.title}: ${result.errors.join("; ")}`);
+    console.error(`[FAIL:${result.route}] ${result.title}: ${result.errors.join("; ")}`);
     await markFailed(page, result.errors);
   }
 
