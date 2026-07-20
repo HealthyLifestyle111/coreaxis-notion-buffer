@@ -85,6 +85,9 @@ const targetData = await gql(
   `query GetTargetPost {
     post(input: { id: "${TARGET_POST_ID}" }) {
       id text status dueAt channelId
+      metadata {
+        ... on TwitterPostMetadata { thread { text } }
+      }
     }
   }`,
 );
