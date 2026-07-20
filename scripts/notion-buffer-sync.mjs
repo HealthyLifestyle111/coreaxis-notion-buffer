@@ -86,12 +86,13 @@ async function getBufferChannels() {
   return channels;
 }
 
-// Buffer Free is intentionally limited to the three routes approved for this project.
-const BUFFER_PLATFORMS = new Set(["X", "TikTok", "Pinterest"]);
+// Buffer Free is intentionally limited to the three channels actually connected for this project.
+// Instagram, TikTok and YouTube Shorts are distributed through Metricool; Facebook is manual until a Page exists.
+const BUFFER_PLATFORMS = new Set(["X", "LinkedIn", "Pinterest"]);
 
 const SERVICE_NAMES = {
   X: ["twitter", "x"],
-  TikTok: ["tiktok"],
+  LinkedIn: ["linkedin"],
   Pinterest: ["pinterest"],
 };
 
