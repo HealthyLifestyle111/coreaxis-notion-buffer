@@ -86,8 +86,8 @@ async function getBufferChannels() {
   return channels;
 }
 
-// Buffer Free is intentionally limited to the three channels actually connected for this project.
-// Instagram, TikTok and YouTube Shorts are distributed through Metricool; Facebook is manual until a Page exists.
+// This workflow is Buffer-only. Any platform not listed here MUST fail closed.
+// It must never be marked Synced, Ready, or successfully routed by this job.
 const BUFFER_PLATFORMS = new Set(["X", "LinkedIn", "Pinterest"]);
 
 const SERVICE_NAMES = {
@@ -135,12 +135,6 @@ function metadataFor(platform, format, text, title) {
     if (thread.length < 2) throw new Error("X thread copy is not split into numbered posts.");
     return { twitter: { thread: thread.map((part) => ({ text: part })) } };
   }
-  if (platform === "Instagram") {
-    return { instagram: { type: f === "story" ? "story" : f === "reel" ? "reel" : "post", shouldShareToFeed: f === "reel", isAiGenerated: true } };
-  }
-  if (platform === "Facebook") return { facebook: { type: f === "story" ? "story" : f === "reel" ? "reel" : "post" } };
-  if (platform === "TikTok") return { tiktok: { isAiGenerated: true } };
-  if (platform === "YouTube Shorts") return { youtube: { title: title.slice(0, 100), privacy: "public", categoryId: "27", madeForKids: false, isAiGenerated: true } };
   return undefined;
 }
 
@@ -197,24 +191,6 @@ async function markError(pageId, message, postIds = []) {
   await updatePage(pageId, properties);
 }
 
-function nativeRoute(platforms) {
-  return platforms.every((platform) => platform === "YouTube Shorts")
-    ? "External Video Route"
-    : "CoreAxis Native";
-}
-
-async function markOutsideBuffer(pageId, platforms) {
-  const names = platforms.join(", ");
-  await updatePage(pageId, {
-    "Send to Buffer": { checkbox: false },
-    "CoreAxis Automation Status": { select: { name: "Not Sent" } },
-    "Publishing Status": { select: { name: "Ready" } },
-    "Distribution Route": { select: { name: nativeRoute(platforms) } },
-    "Buffer Channel IDs": { rich_text: [] },
-    "Buffer Error": { rich_text: [{ text: { content: `Correctly routed outside Buffer: ${names}. Use the approved native scheduler defined in the publishing route matrix.` } }] },
-  });
-}
-
 async function main() {
   console.log("[INIT] Starting approved Notion → Buffer sync");
   const records = await getReadyPages();
@@ -227,7 +203,7 @@ async function main() {
     const text = textValue(p["Full Copy"]);
     const format = optionName(p["Format"]);
     const platforms = selectedPlatforms(p["Platform"]).filter((platform) => platform !== "Email");
-    const outsideBuffer = platforms.filter((platform) => !BUFFER_PLATFORMS.has(platform));
+    const unsupportedPlatforms = platforms.filter((platform) => !BUFFER_PLATFORMS.has(platform));
     const dueAt = scheduledAt(p);
     const postIds = [];
     const channelIds = [];
@@ -235,10 +211,8 @@ async function main() {
       if (!text.trim()) throw new Error("Full Copy is empty.");
       if (!platforms.length) throw new Error("No platform is selected.");
       if (format === "Engagement Block") throw new Error("Engagement blocks are native actions, not scheduled posts.");
-      if (outsideBuffer.length) {
-        await markOutsideBuffer(page.id, outsideBuffer);
-        console.warn(`[SYNC] Routed "${title}" outside Buffer for ${outsideBuffer.join(", ")}.`);
-        continue;
+      if (unsupportedPlatforms.length) {
+        throw new Error(`No active publisher exists in this workflow for ${unsupportedPlatforms.join(", ")}. This job is Buffer-only; do not mark this record Synced until a real scheduler ID is returned by the correct platform publisher.`);
       }
       const missingPlatforms = platforms.filter((platform) => !channelForPlatform(channels, platform));
       if (missingPlatforms.length) {
@@ -247,7 +221,7 @@ async function main() {
       const assets = await mediaAssets(p);
       for (const platform of platforms) {
         const channel = channelForPlatform(channels, platform);
-        if (["Instagram", "TikTok", "YouTube Shorts", "Pinterest"].includes(platform) && !assets.length) {
+        if (platform === "Pinterest" && !assets.length) {
           throw new Error(`${platform} requires a public Buffer Media URL.`);
         }
         const postId = await createBufferPost({ channelId: channel.id, platform, format, text, title, dueAt, assets });
