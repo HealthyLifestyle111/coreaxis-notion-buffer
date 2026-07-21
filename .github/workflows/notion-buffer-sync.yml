@@ -41,4 +41,4 @@ jobs:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: node scripts/notion-buffer-sync.mjs
 
-# Tuesday resync trigger: 2026-07-21
+# Corrected single X thread trigger: 2026-07-21
