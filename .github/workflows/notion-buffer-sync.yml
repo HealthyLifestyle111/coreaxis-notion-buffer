@@ -41,4 +41,4 @@ jobs:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: node scripts/notion-buffer-sync.mjs
 
-# Corrected single X thread trigger: 2026-07-21
+# A+ consumer campaign sync trigger: 2026-07-21
