@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoreAxis Longevity | Precision GLP-1 & Peptide Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy:#0F2A3D;
+    --navy-deep:#0A1E2B;
+    --cream:#F7F5F0;
+    --sage:#3C6E63;
+    --gold:#C9A24B;
+    --ink:#1A1A1A;
+    --line:#D8D3C7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:500;color:var(--navy);}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+
+  .protocol-line{
+    display:flex;align-items:center;gap:6px;height:2px;margin:2.5rem 0;
+  }
+  .protocol-line span{height:2px;background:var(--line);flex:1;}
+  .protocol-line .tick{width:2px;height:14px;background:var(--gold);flex:none;}
+  .protocol-line .tick.major{height:22px;background:var(--sage);}
+
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(247,245,240,0.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1120px;margin:0 auto;padding:1rem 1.5rem;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo-mark{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600;color:var(--navy);letter-spacing:0.01em;}
+  .logo-mark em{font-style:normal;color:var(--sage);}
+  .nav-cta{
+    background:var(--navy);color:var(--cream);padding:0.6rem 1.3rem;
+    border-radius:2px;font-size:0.85rem;font-weight:600;letter-spacing:0.02em;
+  }
+
+  .hero{
+    max-width:1120px;margin:0 auto;padding:4.5rem 1.5rem 3rem;
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:3rem;align-items:center;
+  }
+  .eyebrow{
+    text-transform:uppercase;font-size:0.72rem;letter-spacing:0.16em;
+    color:var(--sage);font-weight:700;margin-bottom:1rem;
+  }
+  .hero h1{font-size:clamp(2.1rem,4vw,3.1rem);line-height:1.08;margin-bottom:1.2rem;}
+  .hero h1 .accent{color:var(--sage);font-style:italic;}
+  .hero p.sub{font-size:1.05rem;color:#3a3a3a;max-width:46ch;margin-bottom:2rem;}
+  .btn-row{display:flex;gap:0.9rem;flex-wrap:wrap;align-items:center;}
+  .btn-primary{
+    background:var(--navy);color:var(--cream);padding:0.95rem 1.8rem;
+    font-weight:600;font-size:0.95rem;border-radius:2px;
+    display:inline-block;transition:background 0.2s ease;
+    border:1px solid var(--navy);
+  }
+  .btn-primary:hover{background:var(--navy-deep);}
+  .btn-secondary{
+    padding:0.95rem 1.6rem;font-weight:600;font-size:0.9rem;
+    border:1px solid var(--navy);color:var(--navy);border-radius:2px;
+  }
+  .disclosure{font-size:0.72rem;color:#767267;margin-top:0.9rem;max-width:42ch;}
+
+  .hero-panel{
+    background:var(--navy);border-radius:4px;padding:2.2rem;color:var(--cream);
+    position:relative;overflow:hidden;
+  }
+  .hero-panel::before{
+    content:"";position:absolute;top:-40%;right:-30%;width:220px;height:220px;
+    background:radial-gradient(circle,var(--sage) 0%,transparent 70%);opacity:0.35;
+  }
+  .hero-panel .tag{font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.9rem;}
+  .hero-panel h3{color:var(--cream);font-size:1.4rem;margin-bottom:0.8rem;}
+  .hero-panel ul{list-style:none;margin:1.2rem 0;}
+  .hero-panel li{
+    padding:0.6rem 0;border-top:1px solid rgba(247,245,240,0.15);
+    font-size:0.9rem;display:flex;justify-content:space-between;color:#E3E0D8;
+  }
+  .hero-panel li:last-child{border-bottom:1px solid rgba(247,245,240,0.15);}
+
+  .audience-section{max-width:1120px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  .toggle-wrap{display:flex;justify-content:center;margin-bottom:2.5rem;}
+  .toggle{display:inline-flex;background:#ECE8DD;border-radius:100px;padding:4px;border:1px solid var(--line);}
+  .toggle button{
+    padding:0.65rem 1.6rem;font-size:0.85rem;font-weight:600;border-radius:100px;
+    background:transparent;border:none;font-family:'Inter',sans-serif;cursor:pointer;color:#6b6559;
+    transition:all 0.2s ease;
+  }
+  .toggle button.active{background:var(--navy);color:var(--cream);}
+
+  .panel{display:none;}
+  .panel.active{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:4px;padding:1.8rem;}
+  .card .num{font-size:0.72rem;color:var(--gold);font-weight:700;letter-spacing:0.08em;margin-bottom:0.6rem;}
+  .card h3{font-size:1.15rem;margin-bottom:0.6rem;}
+  .card p{font-size:0.9rem;color:#4a4a4a;}
+
+  .capture{background:var(--navy);color:var(--cream);padding:4rem 1.5rem;}
+  .capture-inner{max-width:640px;margin:0 auto;text-align:center;}
+  .capture h2{color:var(--cream);font-size:1.9rem;margin-bottom:0.8rem;}
+  .capture p{color:#D9D5CA;margin-bottom:2rem;font-size:0.98rem;}
+  form.capture-form{display:flex;gap:0.6rem;max-width:460px;margin:0 auto;flex-wrap:wrap;justify-content:center;}
+  form.capture-form input[type=email]{
+    flex:1;min-width:220px;padding:0.9rem 1rem;border-radius:2px;border:1px solid rgba(247,245,240,0.3);
+    background:rgba(247,245,240,0.08);color:var(--cream);font-size:0.95rem;
+  }
+  form.capture-form input::placeholder{color:#B7B2A6;}
+  form.capture-form button{
+    background:var(--gold);color:var(--navy-deep);border:none;padding:0.9rem 1.5rem;
+    font-weight:700;font-size:0.9rem;border-radius:2px;cursor:pointer;
+  }
+  .capture .fine{font-size:0.72rem;color:#A9A493;margin-top:1rem;}
+
+  .journey{max-width:1120px;margin:0 auto;padding:4.5rem 1.5rem;}
+  .journey-head{max-width:640px;margin-bottom:2.5rem;}
+  .journey-head .eyebrow{margin-bottom:0.8rem;}
+  .journey-head h2{font-size:1.9rem;margin-bottom:0.9rem;}
+  .journey-head p{color:#3a3a3a;font-size:0.98rem;}
+  .journey-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2rem;}
+  .jcard{border:1px solid var(--line);background:#fff;border-radius:4px;padding:1.4rem;display:flex;flex-direction:column;gap:0.5rem;}
+  .jcard .dot{width:8px;height:8px;border-radius:50%;background:var(--sage);}
+  .jcard h4{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--navy);}
+  .jcard p{font-size:0.82rem;color:#5a5a5a;}
+  .journey-cta{text-align:center;margin-top:1rem;}
+
+  footer{border-top:1px solid var(--line);padding:2.5rem 1.5rem;}
+  .footer-inner{max-width:1120px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:0.78rem;color:#767267;}
+  .footer-inner a{color:#767267;text-decoration:underline;}
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;}
+    .panel.active{grid-template-columns:1fr;}
+    .journey-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:560px){
+    .journey-grid{grid-template-columns:1fr;}
+    form.capture-form{flex-direction:column;}
+  }
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo-mark">CORE<em>AXIS</em></div>
+    <a href="#offer" class="nav-cta">See the Program</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow">CoreAxis Longevity · 2026 Precision Program</div>
+    <h1>Your metabolism isn't broken. <span class="accent">It's undermanaged.</span></h1>
+    <p class="sub">A physician-guided GLP-1 and peptide protocol, personally screened and recommended by our clinical team — matched to your labs, your goals, and a real person checking your progress.</p>
+    <div class="btn-row">
+      <a href="https://elliemd.com" class="btn-primary" id="primary-cta">Go to EllieMD — Start Your Program</a>
+      <a href="#journey" class="btn-secondary">Explore the Full Journey</a>
+    </div>
+    <p class="disclosure">CoreAxis is an independent affiliate partner of EllieMD. Clicking through supports our clinic at no extra cost to you.</p>
+  </div>
+
+  <div class="hero-panel">
+    <div class="tag">What's Included</div>
+    <h3>The Protocol at a Glance</h3>
+    <ul>
+      <li><span>Physician consult</span><span>Included</span></li>
+      <li><span>Lab-informed dosing</span><span>Included</span></li>
+      <li><span>Ongoing titration</span><span>Monthly</span></li>
+      <li><span>Direct clinician access</span><span>Yes</span></li>
+    </ul>
+  </div>
+</section>
+
+<div class="protocol-line" style="max-width:1120px;margin:0 auto;padding:0 1.5rem;">
+  <span></span><div class="tick"></div><span></span><div class="tick major"></div><span></span><div class="tick"></div><span></span>
+</div>
+
+<section class="audience-section" id="offer">
+  <div class="toggle-wrap">
+    <div class="toggle">
+      <button class="active" data-target="consumer">I'm looking for myself</button>
+      <button data-target="professional">I'm a provider / referring</button>
+    </div>
+  </div>
+
+  <div class="panel active" id="consumer">
+    <div class="card">
+      <div class="num">01</div>
+      <h3>Start With Your Labs</h3>
+      <p>We review your metabolic markers first — not a generic starting dose. Your protocol is built around your actual chemistry.</p>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <h3>A Real Clinician, Not a Chatbot</h3>
+      <p>Every plan is reviewed by our clinical team before it's approved, with check-ins built into every month of the program.</p>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <h3>Built to Continue Working</h3>
+      <p>GLP-1 and peptide therapy work best inside a fuller plan — nutrition, movement, and recovery included as you progress.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="professional">
+    <div class="card">
+      <div class="num">01</div>
+      <h3>Refer With Confidence</h3>
+      <p>Send your patients to a program you can stand behind — physician-led, lab-informed, and consistently monitored.</p>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <h3>Stay In the Loop</h3>
+      <p>Referring providers can request progress summaries and stay looped in on their patient's protocol and outcomes.</p>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <h3>Complementary, Not Competing</h3>
+      <p>This program is designed to sit alongside your existing care plan — not replace the relationship you already have with your patient.</p>
+    </div>
+  </div>
+</section>
+
+<section class="capture">
+  <div class="capture-inner">
+    <h2>Get the Full Program Guide</h2>
+    <p>See exactly what's included, how dosing is personalized, and what to expect in your first 30 days — sent straight to your inbox.</p>
+    <form class="capture-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Sent — check your inbox';">
+      <input type="email" placeholder="Your email address" required>
+      <button type="submit">Send Me the Guide</button>
+    </form>
+    <p class="fine">By submitting, you'll also receive occasional updates from CoreAxis Longevity. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<section class="journey" id="journey">
+  <div class="journey-head">
+    <div class="eyebrow">Beyond the Program</div>
+    <h2>Build Your Full Curated Experience</h2>
+    <p>The GLP-1 and peptide program is one piece. Most of our patients pair it with the rest of what CoreAxis offers — so results last well beyond the prescription.</p>
+  </div>
+  <div class="journey-grid">
+    <div class="jcard"><div class="dot"></div><h4>CellCor</h4><p>Cellular recovery and regeneration support.</p></div>
+    <div class="jcard"><div class="dot"></div><h4>Fullscript Journeys</h4><p>Practitioner-grade supplementation, curated for you.</p></div>
+    <div class="jcard"><div class="dot"></div><h4>Whole-Body Nutrition Intake</h4><p>A full intake to guide food, not just prescriptions.</p></div>
+    <div class="jcard"><div class="dot"></div><h4>Lab Panels</h4><p>Ongoing bloodwork to track what's actually changing.</p></div>
+  </div>
+  <div class="journey-cta">
+    <a href="#" class="btn-secondary">Build My Curated Experience</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 CoreAxis Longevity. All rights reserved.</span>
+    <span>CoreAxis is an independent affiliate of EllieMD. This page is created and operated by CoreAxis, not by EllieMD. · <a href="#">Privacy</a> · <a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.toggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.toggle button').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
