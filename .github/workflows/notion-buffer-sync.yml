@@ -40,3 +40,5 @@ jobs:
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: node scripts/notion-buffer-sync.mjs
+
+# Tuesday resync trigger: 2026-07-21
