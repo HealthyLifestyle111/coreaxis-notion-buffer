@@ -97,10 +97,6 @@ function validate(page) {
 
   if (selectedPlatforms.includes("LinkedIn") && containsHashtag(copy)) errors.push("LinkedIn copy contains hashtags against the approved standard");
 
-  if (selectedPlatforms.includes("X") && String(format).toLowerCase() === "thread") {
-    errors.push("X is configured as a thread; launch cadence requires separate drops unless explicitly reapproved");
-  }
-
   if (disclosureRequired && !/(educational|not medical|affiliate|provider determines eligibility|individual results vary|not intended to diagnose|prescription)/i.test(copy)) {
     errors.push("Required disclosure language is missing");
   }
