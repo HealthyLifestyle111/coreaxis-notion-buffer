@@ -1,16 +1,5 @@
 name: Notion Publishing Gate + Buffer Sync
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'scripts/validate-publishing-records.mjs'
-      - 'scripts/notion-buffer-sync.mjs'
-      - '.github/workflows/notion-buffer-sync.yml'
-      - 'package.json'
-      - 'package-lock.json'
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 concurrency:
@@ -41,4 +30,4 @@ jobs:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: node scripts/notion-buffer-sync.mjs
 
-# A+ consumer campaign sync trigger: 2026-07-21
+# Automatic publishing paused until every asset is verified and concept-matched.
