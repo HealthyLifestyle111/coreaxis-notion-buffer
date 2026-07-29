@@ -24,6 +24,8 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci
+      - name: Test publisher routing and duplicate prevention
+        run: npm test
       - name: Run native social sync
         run: node scripts/notion-native-social-sync.mjs
         env:

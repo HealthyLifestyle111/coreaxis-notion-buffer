@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci
+      - name: Test publisher routing and duplicate prevention
+        run: npm test
       - name: Validate every active publishing record
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}

@@ -7,7 +7,7 @@ This repository publishes approved Notion records through two deliberate routes.
 Buffer is limited to the three approved active channels:
 
 - X
-- TikTok
+- LinkedIn
 - Pinterest
 
 Workflow: `.github/workflows/notion-buffer-sync.yml`
@@ -22,7 +22,9 @@ The native workflow publishes directly to:
 
 Workflow: `.github/workflows/notion-native-social-sync.yml`
 
-The workflow runs every five minutes. A native record is eligible only when it is approved, compliance-cleared, publish-ready, marked Ready, not assigned to Buffer, due within four minutes or overdue by less than 24 hours, and has no existing scheduler or external post ID. Missing credentials leave the record Ready; they do not create a false failure. Successful publication writes the platform ID, public URL, and publication time back to Notion and prevents duplicates.
+The workflow is requested every five minutes, but GitHub does not guarantee exact schedule timing. A native record is eligible only when it is approved, compliance-cleared, publish-ready, marked Ready, assigned entirely to one native publisher, due within four minutes or overdue by less than 24 hours, and has no existing scheduler or external post ID. Missing credentials fail the due record visibly instead of producing a false green run. Successful publication writes the platform ID, public URL, and publication time back to Notion and prevents duplicates.
+
+Instagram/TikTok and other mixed-platform campaign records must use an explicit Metricool distribution route or be split into one record per publisher. A record with an existing Metricool scheduler ID is externally managed and is never republished by the native workflow.
 
 ## Existing required secrets
 
@@ -55,8 +57,8 @@ The LinkedIn application needs the appropriate member or organization publishing
 ## Safety controls
 
 - Notion remains the approval gate.
-- X, TikTok, and Pinterest are the only Buffer platforms.
+- X, LinkedIn, and Pinterest are the only Buffer platforms.
 - Native records cannot enter the Buffer workflow.
 - Records with an existing external post ID or scheduler ID are never republished.
-- Unauthenticated platforms are skipped and remain Ready.
+- Due native records on unauthenticated platforms fail visibly and identify the missing secret names.
 - Platform errors are written to `Publishing Error`.
