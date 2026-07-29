@@ -1,4 +1,5 @@
 import { Client } from "@notionhq/client";
+import { BUFFER_PLATFORMS, resolvePublisher } from "./publishing-routing.mjs";
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || "2fc38cda2cba491cb090d4f09d0ec1d2";
@@ -88,8 +89,6 @@ async function getBufferChannels() {
 
 // This workflow is Buffer-only. Any platform not listed here MUST fail closed.
 // It must never be marked Synced, Ready, or successfully routed by this job.
-const BUFFER_PLATFORMS = new Set(["X", "LinkedIn", "Pinterest"]);
-
 const SERVICE_NAMES = {
   X: ["twitter", "x"],
   LinkedIn: ["linkedin"],
@@ -203,7 +202,11 @@ async function main() {
     const text = textValue(p["Full Copy"]);
     const format = optionName(p["Format"]);
     const platforms = selectedPlatforms(p["Platform"]).filter((platform) => platform !== "Email");
-    const unsupportedPlatforms = platforms.filter((platform) => !BUFFER_PLATFORMS.has(platform));
+    const routing = resolvePublisher({
+      platforms,
+      sendToBuffer: checked(p["Send to Buffer"]),
+      distributionRoute: optionName(p["Distribution Route"]) || textValue(p["Distribution Route"]),
+    });
     const dueAt = scheduledAt(p);
     const postIds = [];
     const channelIds = [];
@@ -211,8 +214,8 @@ async function main() {
       if (!text.trim()) throw new Error("Full Copy is empty.");
       if (!platforms.length) throw new Error("No platform is selected.");
       if (format === "Engagement Block") throw new Error("Engagement blocks are native actions, not scheduled posts.");
-      if (unsupportedPlatforms.length) {
-        throw new Error(`No active publisher exists in this workflow for ${unsupportedPlatforms.join(", ")}. This job is Buffer-only; do not mark this record Synced until a real scheduler ID is returned by the correct platform publisher.`);
+      if (routing.publisher !== "buffer") {
+        throw new Error(routing.reason || `Record belongs to the ${routing.publisher} publisher, not Buffer.`);
       }
       const missingPlatforms = platforms.filter((platform) => !channelForPlatform(channels, platform));
       if (missingPlatforms.length) {

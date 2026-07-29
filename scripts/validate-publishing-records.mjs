@@ -1,4 +1,5 @@
 import { Client } from "@notionhq/client";
+import { resolvePublisher } from "./publishing-routing.mjs";
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || "2fc38cda2cba491cb090d4f09d0ec1d2";
@@ -72,12 +73,15 @@ function validate(page) {
   const disclosureRequired = checked(p["Affiliate Disclosure"]) || checked(p["Prescription Drug Risk"]) || checked(p["Medical Claim Risk"]);
   const errors = [];
 
-  const isManual = /manual/i.test(route) || selectedPlatforms.every((name) => name === "Facebook");
-  const isMetricool = /metricool|external video/i.test(route) || selectedPlatforms.some((name) => ["Instagram", "TikTok", "YouTube", "YouTube Shorts"].includes(name));
-  const isBuffer = !isManual && !isMetricool;
+  const routing = resolvePublisher({
+    platforms: selectedPlatforms,
+    sendToBuffer: checked(p["Send to Buffer"]),
+    distributionRoute: route,
+  });
 
   if (!copy && format !== "Story") errors.push("Full Copy is empty");
   if (!selectedPlatforms.length) errors.push("No social platform is selected");
+  if (routing.publisher === "invalid") errors.push(routing.reason);
   if (!scheduled || !futureOrToday(scheduled)) errors.push("No current/future Pulse publication time is set");
   if (!cta) errors.push("Primary CTA is missing");
   if (!containsUrl(copy) && !containsUrl(utm) && !/link in bio/i.test(copy)) errors.push("No destination path exists in copy or UTM Link");
@@ -102,7 +106,7 @@ function validate(page) {
   }
 
   if (["Scheduled", "Published"].includes(status) || ["Queued", "Published"].includes(publishingStatus) || automationStatus === "Synced") {
-    if (!schedulerId && !isManual) errors.push("Record claims scheduled/synced without a Scheduler ID");
+    if (!schedulerId && routing.publisher !== "manual") errors.push("Record claims scheduled/synced without a Scheduler ID");
   }
 
   if (!checked(p["Jenna Approved"])) errors.push("Jenna Approved is not checked");
@@ -111,7 +115,7 @@ function validate(page) {
   if (optionName(p["Affirmative Framing Review"]) !== "Meets Standard") errors.push("Affirmative Framing Review is incomplete");
   if (optionName(p["Scope Separation Review"]) !== "Meets Standard") errors.push("Scope Separation Review is incomplete");
 
-  return { title, errors, route: isManual ? "manual" : isMetricool ? "metricool" : isBuffer ? "buffer" : "unknown" };
+  return { title, errors, route: routing.publisher };
 }
 
 async function allPages() {

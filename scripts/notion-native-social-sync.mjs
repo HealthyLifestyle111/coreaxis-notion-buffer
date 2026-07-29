@@ -1,4 +1,5 @@
 import { Client } from "@notionhq/client";
+import { hasPublicationIdentity, missingCredentials, NATIVE_PLATFORMS, resolvePublisher } from "./publishing-routing.mjs";
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const DATABASE_ID = process.env.NOTION_DATABASE_ID || "2fc38cda2cba491cb090d4f09d0ec1d2";
@@ -26,15 +27,26 @@ function dueAt(p) {
   return date(p["Scheduled Time"]) || date(p["Buffer Publish At"]) || date(p.Date);
 }
 
-function eligible(page) {
+function nativeDecision(page) {
   const p = page.properties || {};
-  const native = platforms(p.Platform).filter((x) => ["Instagram", "Facebook", "LinkedIn", "YouTube Shorts"].includes(x));
-  if (!native.length) return false;
-  if (!checked(p["Jenna Approved"]) || !checked(p["Publish Ready"]) || checked(p["Send to Buffer"])) return false;
-  if (option(p.Status) !== "Approved" || option(p["Compliance Check"]) !== "Cleared") return false;
-  if (option(p["Publishing Status"]) !== "Ready" || text(p["External Post ID"]) || text(p["Scheduler ID"])) return false;
+  const selected = platforms(p.Platform).filter((x) => x !== "Email");
+  const routing = resolvePublisher({
+    platforms: selected,
+    sendToBuffer: checked(p["Send to Buffer"]),
+    distributionRoute: option(p["Distribution Route"]) || text(p["Distribution Route"]),
+  });
+  if (routing.publisher !== "native") return { eligible: false, reason: `publisher:${routing.publisher}` };
+  if (!checked(p["Jenna Approved"]) || !checked(p["Publish Ready"])) return { eligible: false, reason: "approval" };
+  if (option(p.Status) !== "Approved" || option(p["Compliance Check"]) !== "Cleared") return { eligible: false, reason: "clearance" };
+  if (option(p["Publishing Status"]) !== "Ready") return { eligible: false, reason: "publishing-status" };
+  if (hasPublicationIdentity(text(p["External Post ID"]), text(p["Scheduler ID"]))) {
+    return { eligible: false, reason: "external-id" };
+  }
   const when = new Date(dueAt(p)).getTime();
-  return Number.isFinite(when) && when <= Date.now() + DUE_EARLY_MS && when >= Date.now() - DUE_LATE_MS;
+  if (!Number.isFinite(when) || when > Date.now() + DUE_EARLY_MS || when < Date.now() - DUE_LATE_MS) {
+    return { eligible: false, reason: "not-due" };
+  }
+  return { eligible: true, reason: "" };
 }
 
 async function readyPages() {
@@ -45,7 +57,13 @@ async function readyPages() {
     all.push(...r.results);
     start_cursor = r.has_more ? r.next_cursor : undefined;
   } while (start_cursor);
-  return all.filter(eligible);
+  const decisions = all.map((page) => ({ page, ...nativeDecision(page) }));
+  const summary = decisions.reduce((counts, item) => {
+    counts[item.eligible ? "eligible" : item.reason] = (counts[item.eligible ? "eligible" : item.reason] || 0) + 1;
+    return counts;
+  }, {});
+  console.log(`[NATIVE] routing summary ${JSON.stringify(summary)}`);
+  return decisions.filter((item) => item.eligible).map((item) => item.page);
 }
 
 async function request(url, options = {}, label = "request") {
@@ -66,11 +84,6 @@ async function mediaAssets(p) {
     return body.assets.map((x) => ({ url: x.url, type: x.type || (/\.(mp4|mov|webm)(?:\?|$)/i.test(x.url) ? "video" : "image") }));
   }
   return [{ url, type: /\.(mp4|mov|m4v|webm)(?:\?|$)/i.test(url) ? "video" : "image" }];
-}
-
-function metaConfigured(platform) {
-  const base = process.env.META_ACCESS_TOKEN;
-  return Boolean(base && (platform === "Instagram" ? process.env.META_IG_USER_ID : process.env.META_PAGE_ID));
 }
 
 async function metaPost(path, values, label) {
@@ -236,10 +249,7 @@ async function publishLinkedIn(title, copy, assets) {
 }
 
 function configured(platform) {
-  if (["Instagram", "Facebook"].includes(platform)) return metaConfigured(platform);
-  if (platform === "YouTube Shorts") return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN);
-  if (platform === "LinkedIn") return Boolean(process.env.LINKEDIN_ACCESS_TOKEN && process.env.LINKEDIN_AUTHOR_URN);
-  return false;
+  return missingCredentials(platform).length === 0;
 }
 
 async function markPublished(pageId, platform, result) {
@@ -270,9 +280,21 @@ async function main() {
     const p = page.properties;
     const title = text(p["Content Title"]) || page.id;
     const copy = cleanCopy(text(p["Full Copy"]));
-    const platform = platforms(p.Platform).find((x) => ["Instagram", "Facebook", "LinkedIn", "YouTube Shorts"].includes(x));
+    const selected = platforms(p.Platform).filter((x) => NATIVE_PLATFORMS.has(x));
+    if (selected.length !== 1) {
+      failures += 1;
+      const message = `Native records must contain exactly one platform; found ${selected.join(", ") || "(none)"}. Split the record before publishing.`;
+      console.error(`[NATIVE] "${title}" failed: ${message}`);
+      await markFailure(page.id, message);
+      continue;
+    }
+    const platform = selected[0];
+    const missing = missingCredentials(platform);
     if (!configured(platform)) {
-      console.warn(`[NATIVE] ${platform} is not authorized; leaving "${title}" Ready.`);
+      failures += 1;
+      const message = `${platform} publisher is not authorized; missing repository secret(s): ${missing.join(", ")}`;
+      console.error(`[NATIVE] "${title}" failed: ${message}`);
+      await markFailure(page.id, message);
       continue;
     }
     try {

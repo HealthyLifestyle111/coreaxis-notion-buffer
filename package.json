@@ -2,6 +2,9 @@
   "name": "coreaxis-notion-buffer",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
   "dependencies": {
     "@notionhq/client": "^2.2.15",
     "node-fetch": "^3.3.2"
