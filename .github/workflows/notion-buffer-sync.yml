@@ -1,17 +1,17 @@
-name: Notion Publishing Gate + Buffer Sync
+name: Notion Publishing Gate + Buffer + Metricool Sync
 on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
 concurrency:
-  group: notion-buffer-sync
+  group: notion-publishing-sync
   cancel-in-progress: false
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
         with:
@@ -33,3 +33,11 @@ jobs:
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: node scripts/notion-buffer-sync.mjs
+      - name: Publish validated Metricool routes
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
+          METRICOOL_USER_TOKEN: ${{ secrets.METRICOOL_USER_TOKEN }}
+          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
+          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
+        run: node scripts/notion-metricool-sync.mjs
