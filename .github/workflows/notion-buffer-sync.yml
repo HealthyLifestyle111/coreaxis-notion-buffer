@@ -27,12 +27,6 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
         run: node scripts/validate-publishing-records.mjs
-      - name: Publish validated Buffer routes
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
-          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
-        run: node scripts/notion-buffer-sync.mjs
       - name: Publish validated Metricool routes
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
@@ -41,3 +35,9 @@ jobs:
           METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
           METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
         run: node scripts/notion-metricool-sync.mjs
+      - name: Publish validated Buffer routes
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+        run: node scripts/notion-buffer-sync.mjs
