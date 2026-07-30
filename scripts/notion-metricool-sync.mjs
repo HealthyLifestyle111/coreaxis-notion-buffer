@@ -78,14 +78,30 @@ function providerName(platform) {
   return ({ Instagram: "instagram", TikTok: "tiktok", YouTube: "youtube", "YouTube Shorts": "youtube" })[platform];
 }
 
+function formatInTimezone(date, timezone) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const value = (type) => parts.find((part) => part.type === type)?.value;
+  return `${value("year")}-${value("month")}-${value("day")}T${value("hour")}:${value("minute")}:${value("second")}`;
+}
+
 function publicationDate(properties) {
   const raw = dateValue(properties["Scheduled Time"]) || dateValue(properties.Date);
   const date = new Date(raw);
   if (!raw || Number.isNaN(date.getTime())) throw new Error("No valid Scheduled Time is set.");
   if (date.getTime() <= Date.now() + 60_000) throw new Error("Scheduled Time must be safely in the future.");
+  const timezone = optionName(properties.Timezone) || "America/New_York";
   return {
-    dateTime: date.toISOString().replace(/Z$/, ""),
-    timezone: optionName(properties.Timezone) || "America/Denver",
+    dateTime: formatInTimezone(date, timezone),
+    timezone,
   };
 }
 
