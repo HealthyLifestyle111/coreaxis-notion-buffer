@@ -1,11 +1,11 @@
-name: Notion Publishing Gate + Buffer + Metricool Sync
+name: Notion to Buffer X Sync
 on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
 concurrency:
-  group: notion-publishing-sync
+  group: notion-buffer-sync
   cancel-in-progress: false
 
 jobs:
@@ -22,20 +22,7 @@ jobs:
       - run: npm ci
       - name: Test publisher routing and duplicate prevention
         run: npm test
-      - name: Validate every active publishing record
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
-        run: node scripts/validate-publishing-records.mjs
-      - name: Publish validated Metricool routes
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
-          METRICOOL_USER_TOKEN: ${{ secrets.METRICOOL_USER_TOKEN }}
-          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
-          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
-        run: node scripts/notion-metricool-sync.mjs
-      - name: Publish validated Buffer routes
+      - name: Publish approved Buffer routes
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
