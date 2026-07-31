@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/notion-buffer-sync.yml'
       - 'scripts/notion-metricool-sync.mjs'
+      - 'scripts/notion-metricool-reconcile.mjs'
+      - 'scripts/metricool-reconciliation.mjs'
       - 'scripts/notion-buffer-sync.mjs'
       - 'scripts/publishing-routing.mjs'
       - 'test/**'
@@ -28,7 +30,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci
-      - name: Test publisher routing and duplicate prevention
+      - name: Test publisher routing, reconciliation and duplicate prevention
         run: npm test
       - name: Check Metricool executor availability
         id: metricool
@@ -43,6 +45,15 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::warning::Metricool executor is unavailable; connected Buffer routes will continue independently."
           fi
+      - name: Reconcile previously queued Metricool posts
+        if: steps.metricool.outputs.ready == 'true'
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
+          METRICOOL_USER_TOKEN: ${{ secrets.METRICOOL_USER_TOKEN }}
+          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
+          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
+        run: node scripts/notion-metricool-reconcile.mjs
       - name: Publish approved Metricool routes
         if: steps.metricool.outputs.ready == 'true'
         env:
@@ -52,8 +63,6 @@ jobs:
           METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
           METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
         run: node scripts/notion-metricool-sync.mjs
-      # Buffer must continue even when the optional Metricool executor is unavailable.
-      # Buffer validates platform limits and public media before returning a scheduler ID.
       - name: Publish approved Buffer routes
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
