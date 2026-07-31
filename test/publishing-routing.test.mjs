@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { hasPublicationIdentity, missingCredentials, resolvePublisher } from "../scripts/publishing-routing.mjs";
-import { normalizedMediaPayload } from "../scripts/notion-metricool-sync.mjs";
+import { notionReconciliationProperties, providerOutcome, stripMetricoolPrefix } from "../scripts/metricool-reconciliation.mjs";
 
 test("routes approved Buffer platforms only when Send to Buffer is checked", () => {
   assert.equal(resolvePublisher({ platforms: ["X", "Pinterest"], sendToBuffer: true }).publisher, "buffer");
@@ -12,10 +12,7 @@ test("fails closed when a Buffer record contains Instagram", () => {
 });
 
 test("honors an explicit Metricool route for Instagram and TikTok", () => {
-  assert.equal(resolvePublisher({
-    platforms: ["Instagram", "TikTok"],
-    distributionRoute: "Metricool",
-  }).publisher, "metricool");
+  assert.equal(resolvePublisher({ platforms: ["Instagram", "TikTok"], distributionRoute: "Metricool" }).publisher, "metricool");
 });
 
 test("does not silently route an implicit Instagram and TikTok record to native", () => {
@@ -28,10 +25,7 @@ test("routes a native-only Instagram record to native", () => {
 
 test("requires both Meta credentials for Instagram", () => {
   assert.deepEqual(missingCredentials("Instagram", { META_ACCESS_TOKEN: "token" }), ["META_IG_USER_ID"]);
-  assert.deepEqual(missingCredentials("Instagram", {
-    META_ACCESS_TOKEN: "token",
-    META_IG_USER_ID: "123",
-  }), []);
+  assert.deepEqual(missingCredentials("Instagram", { META_ACCESS_TOKEN: "token", META_IG_USER_ID: "123" }), []);
 });
 
 test("detects an existing scheduler or external post ID before republishing", () => {
@@ -39,10 +33,30 @@ test("detects an existing scheduler or external post ID before republishing", ()
   assert.equal(hasPublicationIdentity("", "  "), false);
 });
 
-test("builds the Metricool media object from a normalized mediaId", () => {
-  assert.deepEqual(normalizedMediaPayload({ mediaId: 351326300 }), { mediaId: "351326300" });
+test("strips Metricool scheduler prefix", () => {
+  assert.equal(stripMetricoolPrefix("Metricool:351326300"), "351326300");
 });
 
-test("does not mistake a normalized URL for a Metricool media identity", () => {
-  assert.equal(normalizedMediaPayload({ url: "https://cdn.example.com/video.mp4" }), null);
+test("requires all providers to publish before declaring publication", () => {
+  const outcome = providerOutcome({ providers: [
+    { network: "instagram", status: "PUBLISHED", externalId: "ig1", url: "https://instagram.com/p/ig1" },
+    { network: "tiktok", status: "PENDING" },
+  ] });
+  assert.equal(outcome.state, "pending");
+});
+
+test("extracts real external IDs and public URL after publication", () => {
+  const outcome = providerOutcome({ providers: [
+    { network: "instagram", status: "PUBLISHED", externalId: "ig1", url: "https://instagram.com/p/ig1" },
+  ] });
+  assert.deepEqual(outcome, { state: "published", externalId: "ig1", publicUrl: "https://instagram.com/p/ig1", error: "" });
+  const properties = notionReconciliationProperties(outcome, new Date("2026-08-01T12:00:00.000Z"));
+  assert.equal(properties["Publishing Status"].select.name, "Published");
+  assert.equal(properties["External Post ID"].rich_text[0].text.content, "ig1");
+  assert.equal(properties["Public Post URL"].url, "https://instagram.com/p/ig1");
+});
+
+test("fails closed when Metricool claims publication without public proof", () => {
+  const properties = notionReconciliationProperties({ state: "published", externalId: "ig1", publicUrl: "", error: "" });
+  assert.equal(properties["Publishing Status"].select.name, "Failed");
 });
