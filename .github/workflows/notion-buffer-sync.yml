@@ -53,6 +53,7 @@ jobs:
           METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
         run: node scripts/notion-metricool-sync.mjs
       # Buffer must continue even when the optional Metricool executor is unavailable.
+      # Buffer validates platform limits and public media before returning a scheduler ID.
       - name: Publish approved Buffer routes
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
