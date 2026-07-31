@@ -99,19 +99,23 @@ function publicationDate(properties) {
   if (!raw || Number.isNaN(date.getTime())) throw new Error("No valid Scheduled Time is set.");
   if (date.getTime() <= Date.now() + 60_000) throw new Error("Scheduled Time must be safely in the future.");
   const timezone = optionName(properties.Timezone) || "America/New_York";
-  return {
-    dateTime: formatInTimezone(date, timezone),
-    timezone,
-  };
+  return { dateTime: formatInTimezone(date, timezone), timezone };
+}
+
+export function normalizedMediaPayload(normalized) {
+  const mediaId = normalized?.mediaId || normalized?.id || normalized?.data?.mediaId || normalized?.data?.id;
+  if (!mediaId) return null;
+  return { mediaId: String(mediaId) };
 }
 
 async function normalizeMedia(url) {
-  if (!url) return [];
+  if (!url) return null;
   const normalized = await metricool(`/actions/normalize/image/url?url=${encodeURIComponent(url)}`);
-  if (typeof normalized === "string") return [normalized];
-  if (normalized?.url) return [normalized.url];
-  if (normalized?.mediaId) return [String(normalized.mediaId)];
-  return [url];
+  const media = normalizedMediaPayload(normalized);
+  if (!media) {
+    throw new Error(`Metricool normalized the media URL but did not return a mediaId: ${JSON.stringify(normalized)}`);
+  }
+  return media;
 }
 
 async function createPost(page) {
@@ -131,11 +135,11 @@ async function createPost(page) {
     publicationDate: publicationDate(p),
     text,
     providers,
-    media,
     autoPublish: true,
     saveExternalMediaFiles: true,
     draft: false,
   };
+  if (media) body.media = media;
   if (platforms.includes("YouTube") || platforms.includes("YouTube Shorts")) {
     body.youtubeData = {
       title: textValue(p["Content Title"]).slice(0, 100),
@@ -154,7 +158,6 @@ async function createPost(page) {
     page_id: page.id,
     properties: {
       "Scheduler ID": { rich_text: [{ text: { content: `Metricool:${id}` } }] },
-      "External Post ID": { rich_text: [{ text: { content: String(created?.uuid || id) } }] },
       "CoreAxis Automation Status": { select: { name: "Synced" } },
       "Publishing Status": { select: { name: "Queued" } },
       "Publishing Error": { rich_text: [] },
@@ -185,4 +188,6 @@ async function main() {
   console.log("[SYNC] Metricool complete.");
 }
 
-main().catch((error) => { console.error("[FATAL]", error.message); process.exit(1); });
+if (process.env.NODE_ENV !== "test") {
+  main().catch((error) => { console.error("[FATAL]", error.message); process.exit(1); });
+}
