@@ -472,9 +472,15 @@
         line-height: 1.35;
       }
       .option:hover,
-      .option.selected {
+      .option.selected,
+      .option:has(input:checked) {
         border-color: var(--w);
         background: rgba(214, 111, 91, 0.06);
+      }
+      .option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
       }
       .mark {
         width: 18px;
@@ -487,7 +493,8 @@
       .multi .mark {
         border-radius: 4px;
       }
-      .selected .mark {
+      .selected .mark,
+      .option:has(input:checked) .mark {
         background: var(--w);
         border-color: var(--w);
         box-shadow: inset 0 0 0 4px #fff;
@@ -2140,30 +2147,20 @@
               "<strong>Reassurance and lived experience can coexist:</strong> This answer adds context without turning the Pattern Map into a diagnosis.",
               "<strong>Your final answer closes the loop:</strong> It identifies the result you most want first; the earlier answers show how connected the experience may be.",
             ][step] || "";
-        card.innerHTML = `<div class="assessment-tease">${tease}</div><h3>${q.title}</h3><p class="helper">${q.help || ""}</p><div class="evidence-card">${evidence[step] || ""}</div><div class="options ${q.type === "multi" ? "multi" : ""}">${q.options.map(([v, l]) => `<button type="button" class="option ${(q.type === "multi" ? current.includes(v) : current === v) ? "selected" : ""}" data-v="${v}" onclick="selectOption('${v}')"><span class="mark"></span><span>${l}</span></button>`).join("")}</div><div class="nav"><button class="ghost" onclick="back()" ${step === 0 ? 'style="visibility:hidden"' : ""}>Back</button><button class="next" id="next" onclick="next()">${q.bonus ? "Reveal My Pattern" : "Continue"}</button></div>`;
-        document.getElementById("next").disabled =
-          q.type === "multi" ? !current.length : !current;
-      }
-      function selectOption(v) {
-        const q = Q[step];
-        if (!q || q.type === "contact") return;
-        if (q.type === "multi") {
-          let arr = A[q.id] || [];
-          arr = arr.includes(v)
-            ? arr.filter((x) => x !== v)
-            : arr.length < (q.max || 99)
-              ? [...arr, v]
-              : arr;
-          A[q.id] = arr;
-        } else {
-          A[q.id] = v;
-        }
-        render();
+        card.innerHTML = `<div class="assessment-tease">${tease}</div><h3>${q.title}</h3><p class="helper">${q.help || ""}</p><div class="evidence-card">${evidence[step] || ""}</div><div class="options">${q.options.map(([v, l]) => `<label class="option ${current === v ? "selected" : ""}"><input type="radio" name="assessmentAnswer" value="${v}" ${current === v ? "checked" : ""}><span class="mark"></span><span>${l}</span></label>`).join("")}</div><div class="nav"><button class="ghost" onclick="back()" ${step === 0 ? 'style="visibility:hidden"' : ""}>Back</button><button class="next" id="next" onclick="next()">${q.bonus ? "Reveal My Pattern" : "Continue"}</button></div>`;
       }
       function renderContact(card, q) {
         card.innerHTML = `<h3>${q.title}</h3><p class="helper">Your contact details are separate from the five assessment questions.</p><div class="privacy-summary"><strong>Your privacy matters.</strong> Your assessment selections stay within this browser and are used only to display your educational result. We receive only the limited contact and consent information needed to respond to your request.</div><details class="privacy-details"><summary>How Your Information Is Handled</summary><div class="privacy-copy"><p>This is an educational wellness assessment—not a medical intake, diagnosis, treatment recommendation, or determination of eligibility for medical care.</p><p>Your first name, email address, state, consent choices, and submission date are transmitted through a secure encrypted connection and stored using Wix’s platform security protections. Your individual assessment selections and calculated result remain in your browser and are not submitted to our contact database.</p><p>We do not sell or rent personal information. Limited information may be processed by service providers necessary to operate the website, deliver requested communications, and maintain our systems, as described in our Privacy Policy.</p><p>Please do not enter diagnoses, medications, laboratory results, insurance information, or other sensitive medical information into this assessment.</p><button type="button" onclick="openLegal('privacy')">Read the Full Privacy Policy</button></div></details><div class="fields"><div class="field"><label>First name</label><input id="firstName" autocomplete="given-name"></div><div class="field"><label>Email</label><input id="email" type="email" autocomplete="email"></div><div class="field full"><label>State</label><select id="state"><option value="">Select state</option>${["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"].map((s) => `<option>${s}</option>`).join("")}</select></div></div><label class="check"><input type="checkbox" id="privacyAcknowledgment"> <span>I acknowledge that I have reviewed how my information is handled and consent to the limited processing described above.</span></label><label class="check"><input type="checkbox" id="resultConsent"> <span>I consent to submit my contact information and receive a confirmation regarding this assessment request.</span></label><label class="check"><input type="checkbox" id="marketingConsent"> <span>Yes, I would also like Menopause Core Method™ education, priority-access updates, and occasional CoreAxis emails. This is optional, and I can unsubscribe at any time.</span></label><div class="nav"><button class="ghost" onclick="back()">Back</button><button class="next" onclick="finish()">See My Result</button></div>`;
       }
       function next() {
+        const q = Q[step];
+        if (q && q.type !== "contact") {
+          const selected = document.querySelector(
+            '#card input[name="assessmentAnswer"]:checked',
+          );
+          if (!selected && !q.bonus) return;
+          if (selected) A[q.id] = selected.value;
+        }
         if (step < Q.length - 1) {
           step++;
           render();
