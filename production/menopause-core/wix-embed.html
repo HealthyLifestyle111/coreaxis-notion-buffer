@@ -2147,12 +2147,17 @@
               "<strong>Reassurance and lived experience can coexist:</strong> This answer adds context without turning the Pattern Map into a diagnosis.",
               "<strong>Your final answer closes the loop:</strong> It identifies the result you most want first; the earlier answers show how connected the experience may be.",
             ][step] || "";
-        card.innerHTML = `<div class="assessment-tease">${tease}</div><h3>${q.title}</h3><p class="helper">${q.help || ""}</p><div class="evidence-card">${evidence[step] || ""}</div><div class="options">${q.options.map(([v, l]) => `<button type="button" class="option ${current === v ? "selected" : ""}" aria-pressed="${current === v}" onclick="chooseAnswer('${q.id}','${v}')"><span class="mark"></span><span>${l}</span></button>`).join("")}</div><div class="nav"><button class="ghost" onclick="back()" ${step === 0 ? 'style="visibility:hidden"' : ""}>Back</button><button class="next" id="next" onclick="next()">${q.bonus ? "Reveal My Pattern" : "Continue"}</button></div>`;
+        card.innerHTML = `<div class="assessment-tease">${tease}</div><h3>${q.title}</h3><p class="helper">${q.help || ""}</p><div class="evidence-card">${evidence[step] || ""}</div><div class="options">${q.options.map(([v, l]) => `<button type="button" class="option ${current === v ? "selected" : ""}" aria-pressed="${current === v}" data-question="${q.id}" data-value="${v}"><span class="mark"></span><span>${l}</span></button>`).join("")}</div><div class="nav"><button class="ghost" onclick="back()" ${step === 0 ? 'style="visibility:hidden"' : ""}>Back</button><button class="next" id="next" onclick="next()">${q.bonus ? "Reveal My Pattern" : "Continue"}</button></div>`;
+        card.querySelectorAll(".option").forEach((option) => {
+          option.addEventListener("click", () => {
+            chooseAnswer(option.dataset.question, option.dataset.value);
+          });
+        });
       }
       function chooseAnswer(id, value) {
         A[id] = value;
         document.querySelectorAll("#card .option").forEach((option) => {
-          const selected = option.getAttribute("onclick")?.includes(`'${value}'`);
+          const selected = option.dataset.value === value;
           option.classList.toggle("selected", selected);
           option.setAttribute("aria-pressed", String(selected));
         });
