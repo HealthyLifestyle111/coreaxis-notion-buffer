@@ -1,0 +1,29 @@
+name: Verify governed builds
+
+on:
+  pull_request:
+    paths:
+      - 'production/build-registry.json'
+      - 'scripts/verify-build-registry.mjs'
+      - 'package.json'
+      - '.github/workflows/verify-build-registry.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'production/build-registry.json'
+      - 'scripts/verify-build-registry.mjs'
+      - 'package.json'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run verify:builds
