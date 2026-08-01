@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'pattern-map-react/**'
       - '.github/workflows/deploy-pattern-map.yml'
   workflow_dispatch:
 permissions:
@@ -22,12 +23,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: pattern-map-react/package-lock.json
+      - name: Install
+        working-directory: pattern-map-react
+        run: npm install
+      - name: Build React app
+        working-directory: pattern-map-react
+        run: npm run build
+      - name: Assemble Pages artifact
+        run: |
+          mkdir -p public/pattern-map
+          cp -R docs/. public/
+          cp -R pattern-map-react/dist/. public/pattern-map/
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: public
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
