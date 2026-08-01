@@ -1,12 +1,5 @@
 name: Notion Native Social Sync
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/notion-native-social-sync.mjs'
-      - '.github/workflows/notion-native-social-sync.yml'
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 concurrency:
