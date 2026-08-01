@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Install
         working-directory: pattern-map-react
         run: npm install
@@ -40,6 +40,8 @@ jobs:
           cp -R pattern-map-react/dist/. public/pattern-map/
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
