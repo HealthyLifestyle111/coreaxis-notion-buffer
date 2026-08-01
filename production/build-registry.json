@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "sourceOfTruth": "CoreAxis Executive Command Center — Final Operating Layer",
+  "updated": "2026-08-01",
+  "builds": [
+    {
+      "id": "coreaxis-loop",
+      "name": "CoreAxis Loop",
+      "status": "blocked_external_verification",
+      "platforms": ["Wix", "Base44", "Aminos.ai"],
+      "requiredEvidence": [
+        "public_front_door_url",
+        "portal_login_url",
+        "aminos_route_or_embed",
+        "tested_primary_cta",
+        "tested_provider_handoff",
+        "mobile_verification",
+        "privacy_and_disclosure_verification"
+      ],
+      "humanOnly": [
+        "Authenticate Wix, Base44, and Aminos.ai when the connector cannot access them",
+        "Approve final public launch"
+      ]
+    },
+    {
+      "id": "wellnessbotai",
+      "name": "WellnessBotAI",
+      "status": "blocked_repository_and_platform_access",
+      "platforms": ["Wix", "Aminos.ai", "GitHub"],
+      "requiredEvidence": [
+        "purchase_url",
+        "purchase_event_test",
+        "intake_form_test",
+        "provisioning_repository",
+        "test_tenant_created",
+        "generated_route_verified",
+        "delivery_email_verified",
+        "tenant_disable_control_verified"
+      ],
+      "humanOnly": [
+        "Connect the actual WellnessBotAI repository to the GitHub app",
+        "Authenticate Wix and Aminos.ai",
+        "Approve price, terms, and final launch"
+      ]
+    },
+    {
+      "id": "iterra",
+      "name": "iTerra Wellness Concierge",
+      "status": "blocked_repository_and_host_access",
+      "platforms": ["GitHub", "Supabase", "Cloudflare or current host"],
+      "requiredEvidence": [
+        "current_repository",
+        "current_deployment_url",
+        "database_schema_verified",
+        "row_level_security_verified",
+        "placeholder_urls_removed",
+        "intake_to_result_test",
+        "webinar_route_test",
+        "backoffice_authorization_test",
+        "mobile_or_pwa_test"
+      ],
+      "humanOnly": [
+        "Connect the actual iTerra repository and deployment accounts",
+        "Approve final public launch"
+      ]
+    }
+  ]
+}
