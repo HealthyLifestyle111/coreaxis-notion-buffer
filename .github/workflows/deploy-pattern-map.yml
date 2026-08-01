@@ -1,11 +1,5 @@
 name: Deploy Menopause Core Pattern Map
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docs/**'
-      - 'pattern-map-react/**'
-      - '.github/workflows/deploy-pattern-map.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -40,8 +34,6 @@ jobs:
           cp -R pattern-map-react/dist/. public/pattern-map/
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
