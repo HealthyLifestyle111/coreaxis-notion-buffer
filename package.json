@@ -1,10 +1,11 @@
 {
   "name": "coreaxis-notion-buffer",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "type": "module",
   "scripts": {
     "bootstrap": "node orchestrator/bootstrap.js",
     "test": "node --test",
+    "verify:production": "node orchestrator/verify-production.js",
     "campaign": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js",
     "campaign:sample": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js orchestrator/examples/menopause-core.json",
     "studio": "node orchestrator/bootstrap.js && node studio/server.js",
