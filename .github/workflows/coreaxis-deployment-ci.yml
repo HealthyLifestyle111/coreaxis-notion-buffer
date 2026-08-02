@@ -1,0 +1,39 @@
+name: CoreAxis Deployment CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [deploy/coreaxis-orchestrator]
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm test
+      - run: docker build -t coreaxis-approval-studio .
+      - name: Run container
+        run: |
+          docker run -d --name coreaxis-studio -p 4173:4173 \
+            -e COREAXIS_ADMIN_USER=coreaxis \
+            -e COREAXIS_ADMIN_PASSWORD=test-password \
+            coreaxis-approval-studio
+      - name: Health check
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/api/health | grep -q '"ok":true'; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs coreaxis-studio
+          exit 1
+      - name: Authentication check
+        run: |
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/)" = "401"
+          test "$(curl -s -u coreaxis:test-password -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/)" = "200"
