@@ -1,0 +1,32 @@
+name: CoreAxis Orchestrator CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/coreaxis-creative-orchestrator]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm test
+      - run: npm run campaign:sample
+      - name: Approval Studio smoke test
+        run: |
+          npm run studio > /tmp/coreaxis-studio.log 2>&1 &
+          STUDIO_PID=$!
+          trap 'kill $STUDIO_PID' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/api/health | grep -q '"ok":true'; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/coreaxis-studio.log
+          exit 1

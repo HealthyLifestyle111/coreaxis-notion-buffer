@@ -1,0 +1,103 @@
+{
+  "brand": "CoreAxis Wellness",
+  "tone": ["high-end", "clinically grounded", "warm", "clear", "empowering"],
+  "visualIdentity": {
+    "colors": ["rose gold", "champagne", "pearl", "bronze", "grey"],
+    "typography": ["editorial serif", "clean sans serif"],
+    "composition": ["mobile-safe", "spacious", "premium editorial", "high contrast captions"]
+  },
+  "approvedMessaging": [
+    "Personalized wellness pathways for women, men, families, and pets.",
+    "Education, assessment, professional-grade support, and provider-reviewed options in one connected wellness hub.",
+    "A Second Spring approach to peri-menopause, menopause, and post-menopause wellness."
+  ],
+  "complianceRules": [
+    "Do not diagnose, treat, cure, or prevent disease.",
+    "Use provider-reviewed language for prescription-only offerings.",
+    "State that the licensed provider determines eligibility.",
+    "State that results vary when discussing outcomes.",
+    "Do not imply guaranteed weight loss, hormone correction, reversal, or cure.",
+    "Separate education and wellness support from medical diagnosis or prescribing."
+  ],
+  "bannedPhrases": [
+    "guaranteed results",
+    "cure",
+    "reverse disease",
+    "hormone balancing",
+    "instant transformation"
+  ],
+  "audiences": {
+    "women": "Women navigating peri-menopause, menopause, post-menopause, metabolic wellness, longevity, and healthy aging.",
+    "men": "Men interested in vitality, performance, recovery, libido, body composition, sleep, stress rhythm, and longevity.",
+    "pets": "Pet guardians seeking cautious, clinically informed nutrition education and customized wellness support.",
+    "professionals": "Wellness practitioners and students seeking practical, responsible education and implementation tools."
+  },
+  "offers": {
+    "Menopause Core": {
+      "name": "Menopause Core Method: Becoming",
+      "category": "women's wellness",
+      "positioning": "A personalized Second Spring approach spanning assessment, education, nutrition, lifestyle, optional labs, digital journeys, and provider-reviewed pathways.",
+      "requiredDisclosures": ["Not medical advice.", "Eligibility for prescription options is determined by a licensed provider.", "Results vary."]
+    },
+    "Men's Wellness": {
+      "name": "Oyster Men's Wellness",
+      "category": "men's vitality and longevity",
+      "positioning": "A masculine, modern pathway connecting cellular preparation, nutrition curation, optional labs, digital journeys, provider-reviewed options, and one-to-one support.",
+      "requiredDisclosures": ["Not medical advice.", "Provider determines eligibility for prescription options.", "Results vary."]
+    },
+    "GLP-1": {
+      "name": "Provider-Reviewed Metabolic Wellness",
+      "category": "telewellness",
+      "positioning": "Education and intake support connected to licensed-provider review for eligible prescription-only metabolic options.",
+      "requiredDisclosures": ["Prescription-only.", "A licensed provider determines eligibility.", "Results vary."]
+    },
+    "Peptides": {
+      "name": "Provider-Reviewed Peptide Pathways",
+      "category": "telewellness",
+      "positioning": "Educational guidance and provider-reviewed options within a broader personalized wellness pathway.",
+      "requiredDisclosures": ["Prescription-only where applicable.", "Provider determines eligibility.", "Results vary."]
+    },
+    "Functional Labs": {
+      "name": "Functional Laboratory Options",
+      "category": "assessment",
+      "positioning": "Optional laboratory insights used when appropriate to support individualized education and wellness planning.",
+      "requiredDisclosures": ["Testing does not replace medical diagnosis or emergency care."]
+    },
+    "Fullscript": {
+      "name": "Professional Wellness Shop",
+      "category": "supplements",
+      "positioning": "Professional-grade supplements, curated protocols, and digital wellness journeys.",
+      "requiredDisclosures": ["Supplement information is educational and is not intended to diagnose, treat, cure, or prevent disease."]
+    },
+    "Fasting": {
+      "name": "Fasting Without Food Programs",
+      "category": "education",
+      "positioning": "Structured fasting education with preparation, safety screening, guided implementation, and re-entry support.",
+      "requiredDisclosures": ["Fasting is not appropriate for everyone; medical guidance may be required."]
+    },
+    "Purification": {
+      "name": "Purification and Foundational Wellness",
+      "category": "wellness programs",
+      "positioning": "Preparation-first wellness education focused on drainage, binders, nutrition, energy support, and staged implementation.",
+      "requiredDisclosures": ["Not intended to diagnose, treat, cure, or prevent disease."]
+    },
+    "Pet Wellness": {
+      "name": "High Vibe Pet Tribe and Vibrant Pets",
+      "category": "pet wellness",
+      "positioning": "Customized pet nutrition education, membership support, and cautious wellness guidance for dogs and cats.",
+      "requiredDisclosures": ["Educational support does not replace veterinary diagnosis or emergency care."]
+    },
+    "Education": {
+      "name": "CoreAxis Education",
+      "category": "education",
+      "positioning": "Courses, workshops, clinical-style walkthroughs, recipes, formulations, meditation, culinary wellness, and practical implementation resources.",
+      "requiredDisclosures": []
+    },
+    "Telewellness": {
+      "name": "CoreAxis Telewellness",
+      "category": "wellness services",
+      "positioning": "Remote intake, education, personalized planning, follow-up, and referral into appropriate provider-reviewed pathways.",
+      "requiredDisclosures": ["Telewellness support is not emergency care."]
+    }
+  }
+}
