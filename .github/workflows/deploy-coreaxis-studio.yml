@@ -1,0 +1,27 @@
+name: Deploy CoreAxis Approval Studio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'studio/**'
+      - 'orchestrator/**'
+      - 'Dockerfile'
+      - 'render.yaml'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger managed deployment
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not configured; render.yaml remains the one-click deployment source."
+            exit 0
+          fi
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
