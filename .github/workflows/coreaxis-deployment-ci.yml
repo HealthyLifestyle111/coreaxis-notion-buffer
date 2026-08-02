@@ -1,22 +1,26 @@
 name: CoreAxis Deployment CI
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main]
   push:
-    branches: [finish/coreaxis-production]
+    branches: [main, fix/final-ci-validation]
 
 jobs:
-  container:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
       - run: npm install
       - run: npm test
       - run: npm run verify:production
+      - run: npm run campaign:sample
       - run: docker build -t coreaxis-approval-studio .
       - name: Run container
         run: |
@@ -24,17 +28,21 @@ jobs:
             -e COREAXIS_ADMIN_USER=coreaxis \
             -e COREAXIS_ADMIN_PASSWORD=test-password \
             coreaxis-approval-studio
-      - name: Health check
+      - name: Health and authentication checks
         run: |
           for attempt in {1..30}; do
             if curl --fail --silent http://127.0.0.1:4173/api/health | grep -q '"ok":true'; then
-              exit 0
+              break
+            fi
+            if [ "$attempt" = "30" ]; then
+              docker logs coreaxis-studio
+              exit 1
             fi
             sleep 1
           done
-          docker logs coreaxis-studio
-          exit 1
-      - name: Authentication check
-        run: |
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/)" = "401"
           test "$(curl -s -u coreaxis:test-password -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/)" = "200"
+          test "$(curl -s -u coreaxis:test-password -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/readiness)" = "200"
+      - name: Container logs
+        if: always()
+        run: docker logs coreaxis-studio || true
