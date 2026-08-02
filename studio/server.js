@@ -18,12 +18,22 @@ const json = (res, status, body) => {
   res.end(JSON.stringify(body));
 };
 
+const secureEqual = (left, right) => {
+  const leftHash = crypto.createHash('sha256').update(String(left)).digest();
+  const rightHash = crypto.createHash('sha256').update(String(right)).digest();
+  return crypto.timingSafeEqual(leftHash, rightHash);
+};
+
 const authorized = (req) => {
   if (!adminUser || !adminPassword) return true;
   const header = req.headers.authorization || '';
   if (!header.startsWith('Basic ')) return false;
-  const [user, password] = Buffer.from(header.slice(6), 'base64').toString('utf8').split(':');
-  return crypto.timingSafeEqual(Buffer.from(user || ''), Buffer.from(adminUser)) && crypto.timingSafeEqual(Buffer.from(password || ''), Buffer.from(adminPassword));
+  const decoded = Buffer.from(header.slice(6), 'base64').toString('utf8');
+  const separator = decoded.indexOf(':');
+  if (separator < 0) return false;
+  const user = decoded.slice(0, separator);
+  const password = decoded.slice(separator + 1);
+  return secureEqual(user, adminUser) && secureEqual(password, adminPassword);
 };
 
 const requireAuth = (req, res) => {
