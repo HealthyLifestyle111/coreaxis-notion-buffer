@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: coreaxis-approval-studio
+    runtime: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4173
+      - key: COREAXIS_STORAGE_DIR
+        value: /var/lib/coreaxis
+      - key: COREAXIS_ADMIN_USER
+        value: coreaxis
+      - key: COREAXIS_ADMIN_PASSWORD
+        generateValue: true
+    disk:
+      name: coreaxis-data
+      mountPath: /var/lib/coreaxis
+      sizeGB: 1

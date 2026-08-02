@@ -10,10 +10,37 @@ const root = path.resolve(__dirname, '..');
 const storageDir = path.resolve(process.env.COREAXIS_STORAGE_DIR || path.join(root, '.coreaxis'));
 const orchestrator = new CoreAxisOrchestrator({ storageDir });
 const port = Number(process.env.PORT || 4173);
+const adminUser = process.env.COREAXIS_ADMIN_USER || '';
+const adminPassword = process.env.COREAXIS_ADMIN_PASSWORD || '';
 
 const json = (res, status, body) => {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
   res.end(JSON.stringify(body));
+};
+
+const secureEqual = (left, right) => {
+  const leftHash = crypto.createHash('sha256').update(String(left)).digest();
+  const rightHash = crypto.createHash('sha256').update(String(right)).digest();
+  return crypto.timingSafeEqual(leftHash, rightHash);
+};
+
+const authorized = (req) => {
+  if (!adminUser || !adminPassword) return true;
+  const header = req.headers.authorization || '';
+  if (!header.startsWith('Basic ')) return false;
+  const decoded = Buffer.from(header.slice(6), 'base64').toString('utf8');
+  const separator = decoded.indexOf(':');
+  if (separator < 0) return false;
+  const user = decoded.slice(0, separator);
+  const password = decoded.slice(separator + 1);
+  return secureEqual(user, adminUser) && secureEqual(password, adminPassword);
+};
+
+const requireAuth = (req, res) => {
+  if (authorized(req)) return true;
+  res.writeHead(401, { 'www-authenticate': 'Basic realm="CoreAxis Approval Studio"', 'content-type': 'text/plain; charset=utf-8' });
+  res.end('Authentication required');
+  return false;
 };
 
 const readBody = async (req) => {
@@ -48,17 +75,18 @@ const serveStatic = async (req, res) => {
   if (!file) return false;
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };
   const content = await fs.readFile(path.join(__dirname, 'public', file));
-  res.writeHead(200, { 'content-type': `${types[path.extname(file)]}; charset=utf-8` });
+  res.writeHead(200, { 'content-type': `${types[path.extname(file)]}; charset=utf-8`, 'cache-control': 'no-store' });
   res.end(content);
   return true;
 };
 
 const server = http.createServer(async (req, res) => {
   try {
-    if (await serveStatic(req, res)) return;
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-
     if (req.method === 'GET' && url.pathname === '/api/health') return json(res, 200, { ok: true, service: 'coreaxis-approval-studio' });
+    if (!requireAuth(req, res)) return;
+    if (await serveStatic(req, res)) return;
+
     if (req.method === 'GET' && url.pathname === '/api/campaigns') return json(res, 200, await listCampaigns());
 
     const match = url.pathname.match(/^\/api\/campaigns\/([^/]+)(?:\/(approve|reject|revise|queue))?$/);
@@ -109,7 +137,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, async () => {
+server.listen(port, '0.0.0.0', async () => {
   await orchestrator.initialize();
-  console.log(`CoreAxis Approval Studio running at http://localhost:${port}`);
+  console.log(`CoreAxis Approval Studio running on port ${port}`);
 });

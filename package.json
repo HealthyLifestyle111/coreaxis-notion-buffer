@@ -1,13 +1,14 @@
 {
   "name": "coreaxis-notion-buffer",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "scripts": {
+    "bootstrap": "node orchestrator/bootstrap.js",
     "test": "node --test",
-    "campaign": "node orchestrator/run-campaign.js",
-    "campaign:sample": "node orchestrator/run-campaign.js orchestrator/examples/menopause-core.json",
-    "studio": "node studio/server.js",
-    "start": "node studio/server.js"
+    "campaign": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js",
+    "campaign:sample": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js orchestrator/examples/menopause-core.json",
+    "studio": "node orchestrator/bootstrap.js && node studio/server.js",
+    "start": "node orchestrator/bootstrap.js && node studio/server.js"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",
