@@ -1,0 +1,54 @@
+{
+  "campaignLane": "elliemd",
+  "goal": "Move ready buyers to EllieMD immediately while retaining a CoreAxis relationship for future support and curated offers.",
+  "entry": {
+    "trigger": "comment keyword or direct message",
+    "capture": ["platform", "handle", "sourcePost", "keyword", "offerInterest"]
+  },
+  "stages": [
+    {
+      "id": "new",
+      "trackerStage": "New",
+      "action": "Acknowledge interest and ask one short routing question only when needed."
+    },
+    {
+      "id": "ready_to_buy",
+      "trackerStage": "Link Sent",
+      "condition": "User asks for link, price, how to start, availability, or states they are ready.",
+      "action": "Send EllieMD link immediately. Do not force education or a funnel before the purchase path.",
+      "set": {"EllieMD Link Sent": true, "Leads to EllieMD Link": 1}
+    },
+    {
+      "id": "needs_context",
+      "trackerStage": "Replied",
+      "condition": "User asks what it is, who it is for, or which option may fit.",
+      "action": "Answer briefly using approved campaign materials, then offer the EllieMD link."
+    },
+    {
+      "id": "relationship_capture",
+      "trackerStage": "Follow-up",
+      "condition": "Link has been sent or user is not purchasing immediately.",
+      "action": "Invite the user to remain connected to CoreAxis for curated education, wellness guidance, and future offers without delaying the EllieMD link.",
+      "set": {"CoreAxis Opt-In": true}
+    },
+    {
+      "id": "converted",
+      "trackerStage": "Converted",
+      "condition": "Purchase or close is confirmed.",
+      "action": "Record close and revenue; retain the relationship only with permission."
+    }
+  ],
+  "guardrails": [
+    "Do not diagnose or promise outcomes.",
+    "Do not imply eligibility before provider review.",
+    "Do not block a ready buyer with a questionnaire or long educational sequence.",
+    "Do not mix EllieMD records with another campaign lane.",
+    "Do not send repeated follow-ups after opt-out or disinterest."
+  ],
+  "notion": {
+    "databaseId": "fdc5012639b64c6f9259f5ad59a72b90",
+    "dataSourceId": "32523c6b-f6b0-4fbc-a876-ecc61e34df12",
+    "pipelineViewId": "3b1f092e-8fae-8114-ad96-000c3a1a4dc5",
+    "followUpViewId": "3b1f092e-8fae-8156-a0eb-000c09e6cec5"
+  }
+}

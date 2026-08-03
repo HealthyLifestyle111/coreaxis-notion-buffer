@@ -1,13 +1,16 @@
 {
   "name": "coreaxis-notion-buffer",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "type": "module",
   "scripts": {
     "bootstrap": "node orchestrator/bootstrap.js",
     "test": "node --test",
     "verify:production": "node orchestrator/verify-production.js",
     "campaign": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js",
-    "campaign:sample": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js orchestrator/examples/menopause-core.json",
+    "campaign:lane": "node orchestrator/bootstrap.js && node orchestrator/run-campaign-lane.js",
+    "campaign:batch": "node orchestrator/bootstrap.js && node orchestrator/run-campaign-batch.js",
+    "campaign:elliemd": "node orchestrator/bootstrap.js && node orchestrator/run-campaign-lane.js orchestrator/examples/elliemd.json",
+    "campaign:sample": "node orchestrator/bootstrap.js && node orchestrator/run-campaign-lane.js orchestrator/examples/menopause-core.json",
     "production:lane": "node orchestrator/bootstrap.js && node orchestrator/run-production-lane.js",
     "studio": "node orchestrator/bootstrap.js && node studio/server.js",
     "start": "node orchestrator/bootstrap.js && node studio/server.js"

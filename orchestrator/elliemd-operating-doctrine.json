@@ -1,0 +1,69 @@
+{
+  "campaignLane": "elliemd",
+  "status": "execution-locked",
+  "durationDays": 28,
+  "revenueTarget": 10000,
+  "strategy": {
+    "campaignCount": 1,
+    "niche": "provider-reviewed peptide and metabolic wellness access",
+    "hookFamily": "specificity-first myth-bust",
+    "primaryKeyword": "PEPTIDE",
+    "conversionPath": ["public content", "keyword comment", "DM", "EllieMD link", "close"],
+    "landingPageRequired": false,
+    "readyBuyerRule": "Send ready buyers to EllieMD quickly without forcing an educational funnel.",
+    "relationshipRule": "Offer continued CoreAxis connection separately from, and never instead of, the purchase path."
+  },
+  "measuredAngles": [
+    "weight",
+    "energy",
+    "recovery",
+    "skin",
+    "longevity",
+    "sexual-wellness"
+  ],
+  "cadence": {
+    "minimumPostsPerWeek": 5,
+    "targetPostsPerWeek": 7,
+    "minimumContentPiecesBeforeFormatJudgment": 30,
+    "crossPostAllAvailablePlatforms": true,
+    "respondToEveryComment": true,
+    "respondToEveryDM": true,
+    "outboundEngagementMinutesPerDay": {"minimum": 15, "maximum": 30},
+    "outboundAccountsPerDay": {"minimum": 10, "maximum": 15},
+    "dailyReviewRequired": true
+  },
+  "dailyDecisionRule": {
+    "description": "Use the previous day's data to select the next emphasis.",
+    "rankingMetrics": [
+      "categoryReplies",
+      "elliemdLinkRequests",
+      "closes",
+      "revenue"
+    ],
+    "viewsArePrimaryWinnerMetric": false
+  },
+  "tracker": {
+    "notionDatabaseId": "fdc5012639b64c6f9259f5ad59a72b90",
+    "dataSourceId": "32523c6b-f6b0-4fbc-a876-ecc61e34df12",
+    "dailyRevenueSprintViewId": "3b1f092e-8fae-81a3-beae-000ce65e67eb",
+    "dmPipelineViewId": "3b1f092e-8fae-8114-ad96-000c3a1a4dc5",
+    "followUpsViewId": "3b1f092e-8fae-8156-a0eb-000c09e6cec5",
+    "winningCategoriesViewId": "3b1f092e-8fae-8125-85a4-000cc394f79d",
+    "operatingDoctrinePageId": "3b1f092e8fae81189ad7c97c433f3f2a"
+  },
+  "protectedCampaigns": [
+    {
+      "lane": "menopause-core",
+      "status": "preserved-not-active",
+      "mayDelete": false
+    }
+  ],
+  "executionGuardrails": [
+    "Do not rewrite or replace the locked campaign strategy.",
+    "Do not introduce unrelated campaigns into the four-week EllieMD sprint.",
+    "Do not require a landing page.",
+    "Do not use views alone to select winning content.",
+    "Do not delay ready buyers with unnecessary funnel steps.",
+    "Do not modify Menopause Core while this lane is active."
+  ]
+}
