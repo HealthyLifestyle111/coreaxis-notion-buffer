@@ -3,6 +3,8 @@
   "name": "EllieMD Launch Campaign",
   "lane": "elliemd",
   "program": "EllieMD",
+  "status": "active-revenue-priority",
+  "monthlyRevenueTarget": 10000,
   "objective": "Generate qualified interest and conversions for provider-reviewed peptide and metabolic wellness offerings without interfering with other CoreAxis programs.",
   "audience": "Adults exploring personalized metabolic, longevity, and peptide-based wellness support",
   "offer": "elliemd-provider-reviewed-wellness",
