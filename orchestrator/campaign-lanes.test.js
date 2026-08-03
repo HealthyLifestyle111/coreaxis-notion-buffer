@@ -14,6 +14,13 @@ test('resolves isolated storage and namespace', () => {
   assert.equal(lane.namespace, 'elliemd:august-launch');
 });
 
+test('preserves Menopause Core separately from EllieMD', () => {
+  const menopause = resolveCampaignLane({ id: 'becoming', lane: 'menopause-core' });
+  const elliemd = resolveCampaignLane({ id: 'august-launch', lane: 'elliemd' });
+  assert.notEqual(menopause.storageDir, elliemd.storageDir);
+  assert.notEqual(menopause.namespace, elliemd.namespace);
+});
+
 test('rejects cross-lane ownership', () => {
   assert.throws(
     () => assertLaneOwnership({ lane: 'menopause-core' }, 'elliemd'),
