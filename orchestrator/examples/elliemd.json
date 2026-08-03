@@ -1,0 +1,15 @@
+{
+  "id": "elliemd-launch-2026-08",
+  "name": "EllieMD Launch Campaign",
+  "lane": "elliemd",
+  "program": "EllieMD",
+  "objective": "Generate qualified interest and conversions for provider-reviewed peptide and metabolic wellness offerings without interfering with other CoreAxis programs.",
+  "audience": "Adults exploring personalized metabolic, longevity, and peptide-based wellness support",
+  "offer": "elliemd-provider-reviewed-wellness",
+  "platforms": ["instagram", "facebook", "tiktok"],
+  "keywords": ["peptides", "metabolic wellness", "provider reviewed", "healthy aging"],
+  "tracker": {
+    "notionDatabaseId": "fdc5012639b64c6f9259f5ad59a72b90",
+    "dataSourceId": "32523c6b-f6b0-4fbc-a876-ecc61e34df12"
+  }
+}
