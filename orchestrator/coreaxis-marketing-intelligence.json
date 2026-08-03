@@ -1,0 +1,96 @@
+{
+  "version": "1.1",
+  "authority": "additive-to-locked-campaign",
+  "marketingModels": {
+    "luxuryBrand": "Editorial, expert-led, long-sales-cycle trust building for high-ticket offers.",
+    "physicianAuthority": "Calm, explanatory, evidence-oriented authority with institutional reputation at stake.",
+    "directResponse": "Specificity, low-friction CTA, private conversation, rapid routing, and trackable conversion."
+  },
+  "definitions": {
+    "campaign": "Time-bound commercial objective.",
+    "funnel": "Conversion pathway from attention to action.",
+    "franchise": "Named recurring content format that compounds recognition and authority.",
+    "productionAsset": "Specific video, still, story, article, caption, or prompt used to express the campaign."
+  },
+  "researchIntegrity": [
+    "Separate verified evidence, market observation, and strategic inference.",
+    "Never present inference as validation."
+  ],
+  "competitiveComparisonRequiredFields": [
+    "businessModel",
+    "salesCycle",
+    "revenueModel",
+    "audienceIntent",
+    "trustMechanism",
+    "contentMechanism",
+    "ctaStructure"
+  ],
+  "contentFranchiseDoctrine": {
+    "requiredFields": [
+      "name",
+      "recurringStructure",
+      "visualIdentity",
+      "signatureOpening",
+      "signatureClose",
+      "cta",
+      "dmFlow",
+      "repurposingPlan",
+      "successMetrics",
+      "learningCapture"
+    ]
+  },
+  "elliemdFranchise": {
+    "name": "The Provider Review",
+    "structure": [
+      "This week on The Provider Review plus the exact claim being corrected.",
+      "One precise correction in Jenna's voice.",
+      "Repeat the relevant 16-year practitioner credibility signal.",
+      "Close with: Comment PEPTIDE and I'll send you the direct link."
+    ],
+    "episode1": "The locked Day 1 final script.",
+    "futureEpisodes": [
+      "GLP-1 versus compounded GLP-1",
+      "Sermorelin",
+      "Thymosin Alpha-1",
+      "The category that wins through actual HELP replies and revenue data"
+    ]
+  },
+  "visualStandard": [
+    "direct-to-camera",
+    "Swiss/Japanese luxury",
+    "pearl",
+    "cream",
+    "opal",
+    "bronze",
+    "restrained rose gold",
+    "elegant serif and clean sans-serif",
+    "clean negative space",
+    "calm composed delivery"
+  ],
+  "avoid": [
+    "generic wellness influencer styling",
+    "white coats",
+    "fake medical props",
+    "transformation clichés",
+    "scales",
+    "measuring tape",
+    "syringes as hero imagery"
+  ],
+  "knowledgeCapture": {
+    "capture": [
+      "winningHooks",
+      "openings",
+      "closings",
+      "ctas",
+      "dmBranches",
+      "objections",
+      "categories",
+      "timing",
+      "visualTreatments",
+      "registrations",
+      "closes",
+      "revenue"
+    ],
+    "promotionRule": "A format that wins twice becomes a reusable campaign asset; repeated cross-campaign wins become an operating standard."
+  }
+}
