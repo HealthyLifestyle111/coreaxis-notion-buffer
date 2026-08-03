@@ -1,0 +1,28 @@
+{
+  "status": "final-use-only",
+  "destinationLink": "https://lnk.bio/Precision_Core",
+  "format": "direct-to-camera",
+  "hook": "If you're ordering peptides off a TikTok comment section and injecting them at home — stop for one second.",
+  "script": "If you're ordering peptides off a TikTok comment section and injecting them at home — stop for one second.\n\nI've spent 16 years as a licensed natural health practitioner and lymphatic specialist, and the mistake I see constantly isn't people picking the wrong peptide. It's skipping the one thing that actually determines whether it works: provider-reviewed dosing, based on your actual labs and history — not 'the amount someone posted.'\n\nBPC-157. Sermorelin. Thymosin Alpha-1. GLP-1. These aren't supplements. They work differently depending on your body, your labs, your goals.\n\nComment PEPTIDE and I'll send you the direct link to get this provider-reviewed — not guessed.",
+  "overlay": [
+    ["0:00-0:05", "STOP INJECTING PEPTIDES YOU BOUGHT ONLINE"],
+    ["0:05-0:12", "16 YEARS. LICENSED. NOT A GUESS."],
+    ["0:12-0:22", "BPC-157 • SERMORELIN • THYMOSIN ALPHA-1 • GLP-1"],
+    ["0:22-0:30", "THE AMOUNT SOMEONE POSTED ISN'T A PROTOCOL"],
+    ["0:35-0:43", "COMMENT PEPTIDE ⬇️"]
+  ],
+  "caption": "\"What dose should I use?\" is the wrong question if the answer came from a comment section.\n\nBPC-157, Sermorelin, Thymosin Alpha-1, GLP-1 — these work differently depending on your labs, your history, your goals. Not a number someone posted.\n\nComment PEPTIDE and I'll send you the direct link to get this provider-reviewed.\n\nAffiliate disclosure: I may earn a commission from eligible purchases made through my link. Educational content only. Not medical advice. Eligibility and treatment decisions are determined by a licensed provider. Individual results vary.",
+  "searchKeywords": ["provider-reviewed peptides","BPC-157","Sermorelin","Thymosin Alpha-1","GLP-1 dosing","peptide safety","peptide protocol","longevity telehealth","compounded peptides"],
+  "hashtags": ["#PeptideSafety","#BPC157","#Sermorelin","#ThymosinAlpha1","#GLP1","#ProviderReviewed","#PeptideProtocol","#LongevityMedicine","#StopGuessing","#NaturalHealthPractitioner"],
+  "dm": {
+    "opening": "Thanks for commenting. I can send you directly to the provider-reviewed options now, or help you narrow down what you are looking for first.\n\nReply:\nLINK — I am ready to explore or register now\nHELP — I want the fastest explanation first",
+    "readyBuyer": "Absolutely — here is the direct link to explore the available options and begin the provider-review process:\nhttps://lnk.bio/Precision_Core\n\nEligibility and final treatment decisions are made by the licensed provider. Message me if you have a question while you are going through it.",
+    "helpMenu": ["1 — Weight care or food noise","2 — Energy or NAD+","3 — Recovery or performance","4 — Longevity and healthy aging","5 — Skin or sexual wellness","6 — I am new and want the simplest overview"],
+    "followUps": {
+      "24h": "Just checking that the link opened correctly for you. Were you able to see the option you were looking for, or do you want me to point you toward the closest category?",
+      "72h": "Circling back in case you still had a question before beginning. What is the one thing you would need answered to feel comfortable taking the next step?",
+      "7d": "I wanted to leave the direct access link here once more in case the timing is better now: https://lnk.bio/Precision_Core\nNo pressure — provider eligibility and final recommendations are determined through the private review process."
+    }
+  },
+  "day2Rule": "Use Day 1 hold rate, watch time, completion, PEPTIDE comments, LINK vs HELP split, category replies, completed registrations, and credited revenue. The category with the most HELP replies becomes the Day 2 hook."
+}
