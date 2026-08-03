@@ -1,0 +1,7 @@
+{
+  "campaigns": [
+    "orchestrator/examples/elliemd.json",
+    "orchestrator/examples/menopause-core.json"
+  ],
+  "notes": "EllieMD is the active revenue-priority lane. Menopause Core is preserved and may remain inactive until deliberately resumed."
+}
