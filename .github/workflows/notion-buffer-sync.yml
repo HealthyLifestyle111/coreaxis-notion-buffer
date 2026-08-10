@@ -1,6 +1,8 @@
 name: Notion Publishing Sync
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 concurrency:
   group: notion-publishing-sync
