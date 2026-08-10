@@ -52,7 +52,8 @@ function isApprovedAndReady(page) {
   const p = page.properties || {};
   return checked(p["Jenna Approved"]) && checked(p["Publish Ready"]) && checked(p["Send to Buffer"]) &&
     optionName(p["Status"]) === "Approved" && optionName(p["Compliance Check"]) === "Cleared" &&
-    optionName(p["CoreAxis Automation Status"]) === "Ready";
+    optionName(p["CoreAxis Automation Status"]) === "Ready" &&
+    !textValue(p["Buffer Post IDs"]) && !textValue(p["Scheduler ID"]);
 }
 
 async function getReadyPages() {
@@ -87,8 +88,6 @@ async function getBufferChannels() {
   return channels;
 }
 
-// This workflow is Buffer-only. Any platform not listed here MUST fail closed.
-// It must never be marked Synced, Ready, or successfully routed by this job.
 const SERVICE_NAMES = {
   X: ["twitter", "x"],
   LinkedIn: ["linkedin"],
@@ -127,7 +126,7 @@ function splitThread(text) {
   return text.split(/\n\s*\n(?=\d+\/\s)/).map((part) => part.trim()).filter(Boolean);
 }
 
-function metadataFor(platform, format, text, title) {
+function metadataFor(platform, format, text) {
   const f = String(format).toLowerCase();
   if (platform === "X" && f === "thread") {
     const thread = splitThread(text);
@@ -137,7 +136,7 @@ function metadataFor(platform, format, text, title) {
   return undefined;
 }
 
-async function createBufferPost({ channelId, platform, format, text, title, dueAt, assets }) {
+async function createBufferPost({ channelId, platform, format, text, dueAt, assets }) {
   const due = new Date(dueAt);
   if (!dueAt || Number.isNaN(due.getTime())) throw new Error("No valid Buffer Publish At or Scheduled Time is set.");
   if (due.getTime() <= Date.now() + 60_000) throw new Error("Publish time is not safely in the future; reschedule in Notion.");
@@ -149,7 +148,7 @@ async function createBufferPost({ channelId, platform, format, text, title, dueA
     dueAt: due.toISOString(),
   };
   if (assets.length) input.assets = assets;
-  const metadata = metadataFor(platform, format, text, title);
+  const metadata = metadataFor(platform, format, text);
   if (metadata) input.metadata = metadata;
   const data = await bufferGraphQL(`
     mutation CreatePost($input: CreatePostInput!) {
@@ -227,7 +226,7 @@ async function main() {
         if (platform === "Pinterest" && !assets.length) {
           throw new Error(`${platform} requires a public Buffer Media URL.`);
         }
-        const postId = await createBufferPost({ channelId: channel.id, platform, format, text, title, dueAt, assets });
+        const postId = await createBufferPost({ channelId: channel.id, platform, format, text, dueAt, assets });
         postIds.push(`${platform}:${postId}`);
         channelIds.push(`${platform}:${channel.id}`);
       }
