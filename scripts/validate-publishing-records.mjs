@@ -46,11 +46,11 @@ function containsHashtag(value) {
   return /(^|\s)#[A-Za-z0-9_]+/.test(value || "");
 }
 
-function futureOrToday(dateText) {
+function futurePublication(dateText) {
   if (!dateText) return false;
   const date = new Date(dateText);
   if (Number.isNaN(date.getTime())) return false;
-  return date.getTime() >= Date.now() - 24 * 60 * 60 * 1000;
+  return date.getTime() > Date.now() + 60 * 1000;
 }
 
 function validate(page) {
@@ -63,7 +63,6 @@ function validate(page) {
   const publishingStatus = optionName(p["Publishing Status"]);
   const automationStatus = optionName(p["CoreAxis Automation Status"]);
   const route = optionName(p["Distribution Route"]) || textValue(p["Distribution Route"]);
-  const scheduled = dateValue(p["Scheduled Time"]) || dateValue(p["Buffer Publish At"]) || dateValue(p["Date"]);
   const utm = urlValue(p["UTM Link"]) || textValue(p["UTM Link"]);
   const media = urlValue(p["Buffer Media URL"]);
   const cta = textValue(p["Primary CTA"]);
@@ -82,16 +81,23 @@ function validate(page) {
   if (!copy && format !== "Story") errors.push("Full Copy is empty");
   if (!selectedPlatforms.length) errors.push("No social platform is selected");
   if (routing.publisher === "invalid") errors.push(routing.reason);
-  if (!scheduled || !futureOrToday(scheduled)) errors.push("No current/future Pulse publication time is set");
   if (!cta) errors.push("Primary CTA is missing");
-  if (!containsUrl(copy) && !containsUrl(utm) && !/link in bio/i.test(copy)) errors.push("No destination path exists in copy or UTM Link");
-  if (/PENDING|PLACEHOLDER|TBD|\{\{|\[insert/i.test(`${copy} ${utm} ${ctaAlignment}`)) errors.push("Placeholder or pending destination remains");
+  if (!containsUrl(copy) && !containsUrl(utm) && !/link in bio/i.test(copy) && !/description/i.test(ctaAlignment)) {
+    errors.push("No destination path exists in copy or UTM Link");
+  }
+  if (/PENDING|PLACEHOLDER|TBD|\{\{|\[insert/i.test(`${copy} ${utm} ${ctaAlignment}`)) {
+    errors.push("Placeholder or pending destination remains");
+  }
 
   const hashtagPlatforms = selectedPlatforms.filter((name) => ["Instagram", "TikTok", "Facebook", "Pinterest", "YouTube", "YouTube Shorts"].includes(name));
-  if (hashtagPlatforms.length && format !== "Story" && !containsHashtag(copy)) errors.push(`Platform hashtags missing for ${hashtagPlatforms.join(", ")}`);
+  if (hashtagPlatforms.length && format !== "Story" && !containsHashtag(copy)) {
+    errors.push(`Platform hashtags missing for ${hashtagPlatforms.join(", ")}`);
+  }
 
   const mediaPlatforms = selectedPlatforms.filter((name) => ["Instagram", "TikTok", "Pinterest", "YouTube", "YouTube Shorts"].includes(name));
-  if (mediaPlatforms.length && !media) errors.push(`Public media URL missing for ${mediaPlatforms.join(", ")}`);
+  if (mediaPlatforms.length && !media) {
+    errors.push(`Public media URL missing for ${mediaPlatforms.join(", ")}`);
+  }
 
   if (selectedPlatforms.includes("Instagram")) {
     if (/link in bio/i.test(copy) && !containsUrl(utm)) errors.push("Instagram relies on an unverified bio path");
@@ -104,6 +110,14 @@ function validate(page) {
   if (disclosureRequired && !/(educational|not medical|affiliate|provider determines eligibility|individual results vary|not intended to diagnose|prescription)/i.test(copy)) {
     errors.push("Required disclosure language is missing");
   }
+
+  // Use the live scheduling field that the owning publisher actually consumes.
+  // Buffer and Metricool use Buffer Publish At; native records may use Scheduled Time.
+  const publicationDate = routing.publisher === "buffer" || routing.publisher === "metricool"
+    ? dateValue(p["Buffer Publish At"])
+    : dateValue(p["Scheduled Time"]) || dateValue(p["Buffer Publish At"]);
+  if (routing.publisher !== "manual" && !publicationDate) errors.push(`No ${routing.publisher} publication time is set`);
+  else if (routing.publisher !== "manual" && !futurePublication(publicationDate)) errors.push(`${routing.publisher} publication time is not safely in the future`);
 
   if (["Scheduled", "Published"].includes(status) || ["Queued", "Published"].includes(publishingStatus) || automationStatus === "Synced") {
     if (!schedulerId && routing.publisher !== "manual") errors.push("Record claims scheduled/synced without a Scheduler ID");
@@ -137,9 +151,20 @@ async function markFailed(page, errors) {
       "Status": { select: { name: "Hold" } },
       "Publishing Status": { select: { name: "Failed" } },
       "CoreAxis Automation Status": { select: { name: "Error" } },
-      "Send to Buffer": { checkbox: false },
       "Publishing Error": { rich_text: [{ text: { content: message } }] },
       "Buffer Error": { rich_text: [{ text: { content: message } }] },
+      "Current Production Blocker": { rich_text: [{ text: { content: errors.join("; ").slice(0, 1900) } }] },
+    },
+  });
+}
+
+async function clearValidationErrors(page) {
+  await notion.pages.update({
+    page_id: page.id,
+    properties: {
+      "Publishing Error": { rich_text: [] },
+      "Buffer Error": { rich_text: [] },
+      "Current Production Blocker": { rich_text: [] },
     },
   });
 }
@@ -150,8 +175,12 @@ async function main() {
     const p = page.properties || {};
     const status = optionName(p["Status"]);
     const publishingStatus = optionName(p["Publishing Status"]);
-    const scheduled = dateValue(p["Scheduled Time"]) || dateValue(p["Buffer Publish At"]) || dateValue(p["Date"]);
-    return ["Approved", "Scheduled"].includes(status) || ["Ready", "Queued"].includes(publishingStatus) || futureOrToday(scheduled);
+    const automationStatus = optionName(p["CoreAxis Automation Status"]);
+    const publishReady = checked(p["Publish Ready"]);
+    return ["Approved", "Scheduled"].includes(status)
+      || ["Ready", "Queued", "Failed"].includes(publishingStatus)
+      || ["Ready", "Error"].includes(automationStatus)
+      || publishReady;
   });
 
   let failed = 0;
@@ -159,6 +188,7 @@ async function main() {
     const result = validate(page);
     if (!result.errors.length) {
       console.log(`[PASS:${result.route}] ${result.title}`);
+      await clearValidationErrors(page);
       continue;
     }
     failed += 1;
