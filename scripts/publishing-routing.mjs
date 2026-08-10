@@ -2,35 +2,24 @@ export const BUFFER_PLATFORMS = new Set(["X", "LinkedIn", "Pinterest"]);
 export const NATIVE_PLATFORMS = new Set(["Instagram", "Facebook", "LinkedIn", "YouTube Shorts"]);
 export const METRICOOL_PLATFORMS = new Set(["Instagram", "TikTok", "YouTube", "YouTube Shorts"]);
 
-function allIn(platforms, allowed) {
-  return platforms.length > 0 && platforms.every((platform) => allowed.has(platform));
-}
+const normalize = (value) => String(value || "").trim();
 
-export function resolvePublisher({ platforms, sendToBuffer = false, distributionRoute = "" }) {
-  const route = String(distributionRoute).trim().toLowerCase();
-
+export function resolvePublisher({ platforms = [], sendToBuffer = false, distributionRoute = "" }) {
+  const route = normalize(distributionRoute).toLowerCase();
+  const unique = [...new Set(platforms.map(normalize).filter(Boolean))];
+  if (!unique.length) return { publisher: "invalid", reason: "No platform is selected." };
   if (/manual/.test(route)) return { publisher: "manual" };
   if (/metricool|external video/.test(route)) {
-    const unsupported = platforms.filter((platform) => !METRICOOL_PLATFORMS.has(platform));
-    return unsupported.length
-      ? { publisher: "invalid", reason: `Metricool route contains unsupported platform(s): ${unsupported.join(", ")}` }
-      : { publisher: "metricool" };
+    const unsupported = unique.filter((p) => !METRICOOL_PLATFORMS.has(p));
+    return unsupported.length ? { publisher: "invalid", reason: `Metricool route contains unsupported platform(s): ${unsupported.join(", ")}` } : { publisher: "metricool" };
   }
-
   if (sendToBuffer) {
-    const unsupported = platforms.filter((platform) => !BUFFER_PLATFORMS.has(platform));
-    return unsupported.length
-      ? { publisher: "invalid", reason: `Buffer route contains unsupported platform(s): ${unsupported.join(", ")}` }
-      : { publisher: "buffer" };
+    const unsupported = unique.filter((p) => !BUFFER_PLATFORMS.has(p));
+    return unsupported.length ? { publisher: "invalid", reason: `Buffer route contains unsupported platform(s): ${unsupported.join(", ")}` } : { publisher: "buffer" };
   }
-
-  if (allIn(platforms, NATIVE_PLATFORMS)) return { publisher: "native" };
-  if (allIn(platforms, METRICOOL_PLATFORMS)) return { publisher: "metricool" };
-
-  return {
-    publisher: "invalid",
-    reason: `Record mixes publishers or has no supported publisher: ${platforms.join(", ") || "(none)"}`,
-  };
+  if (unique.every((p) => NATIVE_PLATFORMS.has(p))) return { publisher: "native" };
+  if (unique.every((p) => METRICOOL_PLATFORMS.has(p))) return { publisher: "metricool" };
+  return { publisher: "invalid", reason: `Record mixes publishers or has no supported publisher: ${unique.join(", ")}` };
 }
 
 export function requiredCredentials(platform) {
@@ -46,5 +35,5 @@ export function missingCredentials(platform, env = process.env) {
 }
 
 export function hasPublicationIdentity(...values) {
-  return values.some((value) => String(value || "").trim().length > 0);
+  return values.some((value) => normalize(value).length > 0);
 }
