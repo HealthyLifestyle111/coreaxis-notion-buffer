@@ -1,6 +1,8 @@
 name: Notion Native Social Sync
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
 
 concurrency:
   group: notion-native-social-sync
