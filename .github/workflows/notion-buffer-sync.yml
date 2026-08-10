@@ -20,6 +20,8 @@ jobs:
       - run: npm ci
       - name: Test publisher routing, reconciliation and duplicate prevention
         run: npm test
+      - name: Verify production application
+        run: npm run verify:production
       - name: Check Metricool executor availability
         id: metricool
         env:
@@ -31,7 +33,7 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Metricool executor is unavailable; connected Buffer routes will continue independently."
+            echo "Metricool executor unavailable; Buffer route continues independently."
           fi
       - name: Reconcile previously queued Metricool posts
         if: steps.metricool.outputs.ready == 'true'
