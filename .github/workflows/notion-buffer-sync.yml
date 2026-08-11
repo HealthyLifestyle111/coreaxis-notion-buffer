@@ -1,11 +1,11 @@
 name: Notion Publishing Sync
 on:
   workflow_dispatch:
-
+  schedule:
+    - cron: '*/15 * * * *'
 concurrency:
   group: notion-publishing-sync
   cancel-in-progress: false
-
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -22,40 +22,28 @@ jobs:
         run: npm test
       - name: Verify production application
         run: npm run verify:production
-      - name: Check Metricool executor availability
-        id: metricool
+      - name: Publish approved Metricool routes
         env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
           METRICOOL_USER_TOKEN: ${{ secrets.METRICOOL_USER_TOKEN }}
           METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
           METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
         run: |
-          if [ -n "$METRICOOL_USER_TOKEN" ] && [ -n "$METRICOOL_USER_ID" ] && [ -n "$METRICOOL_BLOG_ID" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
+          if [ -n "$NOTION_TOKEN" ] && [ -n "$METRICOOL_USER_TOKEN" ] && [ -n "$METRICOOL_USER_ID" ] && [ -n "$METRICOOL_BLOG_ID" ]; then
+            node scripts/notion-metricool-reconcile.mjs
+            node scripts/notion-metricool-sync.mjs
           else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "Metricool executor unavailable; Buffer route continues independently."
+            echo "Metricool route skipped: credentials unavailable."
           fi
-      - name: Reconcile previously queued Metricool posts
-        if: steps.metricool.outputs.ready == 'true'
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
-          METRICOOL_USER_TOKEN: ${{ secrets.METRICOOL_USER_TOKEN }}
-          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
-          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
-        run: node scripts/notion-metricool-reconcile.mjs
-      - name: Publish approved Metricool routes
-        if: steps.metricool.outputs.ready == 'true'
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
-          METRICOOL_USER_TOKEN: ${{ secrets.METRICOOL_USER_TOKEN }}
-          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
-          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
-        run: node scripts/notion-metricool-sync.mjs
       - name: Publish approved Buffer routes
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: '2fc38cda2cba491cb090d4f09d0ec1d2'
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
-        run: node scripts/notion-buffer-sync.mjs
+        run: |
+          if [ -n "$NOTION_TOKEN" ] && [ -n "$BUFFER_API_KEY" ]; then
+            node scripts/notion-buffer-sync.mjs
+          else
+            echo "Buffer route skipped: credentials unavailable."
+          fi
