@@ -1,4 +1,4 @@
-const { route } = require('./engine');
+import { route } from './engine.js';
 
 const cases = [
   [{ intent:'peptide' }, 'peptide_direct'],
