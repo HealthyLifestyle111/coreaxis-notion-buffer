@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { routeKnownIntent, routeDiscovery, intakeFor } from './whole-practice-router.js';
 
-test('direct CellCore bypasses Whole Practice intake', () => {
+test('CoreAxis CellCore intent enters Whole Practice foundation before CellCore', () => {
   const route = routeKnownIntent('jumpstart');
-  assert.equal(route.whole_practice_intake, false);
-  assert.equal(route.action, 'send_to_established_cellcore_patient_access_route');
+  assert.equal(route.whole_practice_intake, true);
+  assert.equal(route.action, 'create_or_update_whole_practice_client_then_release_foundation_experience_before_cellcore');
+  assert.equal(route.downstream, 'cellcore_specific_assessment_after_foundation_review');
 });
 
 test('peptide intent uses direct route', () => {
@@ -48,6 +49,12 @@ test('practitioner foundation routes to complimentary Cellular Cleanse', () => {
   assert.equal(route.title, 'Cellular Cleanse');
   assert.equal(route.price, 0);
   assert.equal(route.price_status, 'complimentary');
+});
+
+test('explicit CellCore foundation choice still requires Whole Practice', () => {
+  const route = routeDiscovery({ goal: 'overall_foundation', foundationChoice: 'direct_cellcore' });
+  assert.equal(route.whole_practice_intake, true);
+  assert.equal(route.action, 'create_or_update_whole_practice_client_then_release_foundation_experience_before_cellcore');
 });
 
 test('ambiguous cases go to concierge review instead of guessing', () => {
