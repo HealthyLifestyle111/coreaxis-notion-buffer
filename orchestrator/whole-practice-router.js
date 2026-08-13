@@ -2,7 +2,7 @@ import routing from './config/whole-practice-routing.json' with { type: 'json' }
 
 export function routeKnownIntent(intent) {
   const value = String(intent ?? '').trim().toLowerCase();
-  if (['cellcore', 'jumpstart', 'cellcore_products'].includes(value)) return routing.direct_routes.DIRECT_CELLCORE;
+  if (['cellcore', 'jumpstart', 'cellcore_products'].includes(value)) return routing.direct_routes.COREAXIS_CELLCORE_FOUNDATION;
   if (value === 'peptides') return routing.direct_routes.DIRECT_PEPTIDE;
   if (value === 'named_program') return routing.direct_routes.DIRECT_PROGRAM;
   return null;
@@ -26,8 +26,8 @@ export function routeDiscovery({ goal, womenGoal, menGoal, foundationChoice } = 
     return { route: 'concierge_review' };
   }
   if (g === 'overall_foundation') {
-    if (foundationChoice === 'direct_cellcore') return routing.direct_routes.DIRECT_CELLCORE;
     if (foundationChoice === 'practitioner_foundation') return routing.destinations.CELLULAR_CLEANSE;
+    if (foundationChoice === 'direct_cellcore') return routing.direct_routes.COREAXIS_CELLCORE_FOUNDATION;
     return { route: 'concierge_review' };
   }
   return { route: 'concierge_review' };
