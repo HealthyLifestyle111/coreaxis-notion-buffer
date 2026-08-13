@@ -26,8 +26,11 @@ ATTENTION -> DM/CTA -> QUALIFICATION -> ONE BEST ROUTE -> OFFER/DESTINATION -> P
 - Man / vitality / performance / longevity -> Oyster
 - Pet -> Vibrant Pets
 - Human + pet household -> Healthier Together
-- Foundational cellular-support interest -> Cellular Cleanse (complimentary)
+- Foundational cellular-support interest -> Cellular Foundation (complimentary)
 - Unclear / complex / practitioner-dependent -> Concierge / human handoff
+
+## Naming control
+The approved public name for the complimentary foundational pathway is **Cellular Foundation**. Do not use Cellular Cleanse or Foundational Cleanse in public-facing package names, DM copy, campaign names, or routing labels. CellCore remains a product/brand name only where appropriate and must not be substituted for the program name.
 
 ## DM sales rules
 - High-intent leads get the shortest path to the approved purchase/activation destination.
@@ -47,7 +50,7 @@ CONTENT / AD -> CTA -> MANYCHAT TRIGGER -> CONVERSATION -> LEAD ASSET OR QUALIFI
 
 ## Campaign library — OFF until activated
 - EllieMD / PEPTIDE — launch candidate
-- Cellular Cleanse
+- Cellular Foundation
 - Pomegranate
 - Menopause Core
 - OVO
