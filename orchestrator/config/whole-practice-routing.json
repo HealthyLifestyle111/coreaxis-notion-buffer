@@ -1,0 +1,173 @@
+{
+  "version": "1.0.0",
+  "status": "production-candidate",
+  "practice": "CoreAxis",
+  "consumer_model": "concierge_destination",
+  "principles": {
+    "catalog_first": false,
+    "gateway_is_not_clinical_intake": true,
+    "direct_known_intent_bypasses_discovery": true,
+    "release_only_relevant_intake": true,
+    "cellular_cleanse_complimentary": true,
+    "cellcore_is_backend_product_protocol_not_offer_name": true,
+    "aminos": false,
+    "invented_duration": false,
+    "invented_price": false
+  },
+  "entry": {
+    "headline": "Tell us what you're looking for. We'll take it from there.",
+    "subhead": "You don't need to know which program you need. A few thoughtful questions will help us identify the right place to begin.",
+    "cta": "FIND MY PATH"
+  },
+  "gateway": [
+    {
+      "id": "known_intent",
+      "question": "Do you already know what you're looking for?",
+      "answers": {
+        "yes": "known_route",
+        "goal_not_solution": "discovery",
+        "unsure": "discovery"
+      }
+    },
+    {
+      "id": "known_route",
+      "question": "Which are you looking for?",
+      "answers": {
+        "cellcore": "DIRECT_CELLCORE",
+        "jumpstart": "DIRECT_CELLCORE",
+        "cellcore_products": "DIRECT_CELLCORE",
+        "peptides": "DIRECT_PEPTIDE",
+        "named_program": "DIRECT_PROGRAM",
+        "other": "discovery"
+      }
+    },
+    {
+      "id": "discovery",
+      "question": "What would you most like support with right now?",
+      "answers": {
+        "overall_foundation": "foundation_elimination",
+        "women": "women_elimination",
+        "menopause": "MENOPAUSE_CORE",
+        "fertility": "OVO",
+        "men": "men_elimination",
+        "pet": "VIBRANT_PETS",
+        "household": "HEALTHIER_TOGETHER",
+        "specific": "concierge_review",
+        "unsure": "concierge_review"
+      }
+    }
+  ],
+  "elimination": {
+    "foundation_elimination": {
+      "question": "Are you specifically looking for the direct CellCore route, or practitioner-guided foundational support?",
+      "direct_cellcore": "DIRECT_CELLCORE",
+      "practitioner_foundation": "CELLULAR_CLEANSE",
+      "unclear": "concierge_review"
+    },
+    "women_elimination": {
+      "question": "Which is closest to your current goal?",
+      "whole_woman": "POMEGRANATE",
+      "cycle_reproductive_wellness": "POMEGRANATE",
+      "fertility_preparation": "OVO",
+      "perimenopause_menopause": "MENOPAUSE_CORE",
+      "multiple_unclear": "concierge_review"
+    },
+    "men_elimination": {
+      "question": "Which is closest to your current goal?",
+      "vitality_performance_recovery_longevity": "OYSTER",
+      "fertility_family_building": "OVO",
+      "multiple_unclear": "concierge_review"
+    }
+  },
+  "destinations": {
+    "CELLULAR_CLEANSE": {
+      "title": "Cellular Cleanse",
+      "price": 0,
+      "price_status": "complimentary",
+      "intake": "cellular_cleanse_starting_assessment",
+      "description": "A practitioner-guided foundational pathway for those who want to begin with a structured cellular-support approach. Your starting assessment establishes the foundation for review; when this pathway is appropriate, the practitioner determines the appropriate next step and coordinates the relevant protocol and resources. This is a complimentary starting pathway, not a retail product bundle.",
+      "invite_subject": "Your Cellular Cleanse pathway is ready"
+    },
+    "POMEGRANATE": {
+      "title": "Pomegranate — Whole-Woman Foundations",
+      "price": null,
+      "price_status": "approved_source_required",
+      "intake": "pomegranate_targeted_intake",
+      "description": "A premium whole-woman wellness pathway designed to bring nutrition, daily rhythms, vitality, reproductive wellness, and life-stage considerations into one coherent strategy. Your targeted intake is reviewed personally, then your next step is selected from the appropriate pathway when indicated.",
+      "invite_subject": "Your Whole-Woman Pathway is ready"
+    },
+    "MENOPAUSE_CORE": {
+      "title": "Menopause Core",
+      "price": null,
+      "price_status": "approved_source_required",
+      "intake": "menopause_core_intake",
+      "description": "A curated entry into Menopause Core for women navigating perimenopause, menopause, or the years beyond. Your experience begins with a focused assessment and pattern review, then moves into a prioritized strategy built around your actual priorities.",
+      "invite_subject": "Your Menopause Core pathway is ready"
+    },
+    "OVO": {
+      "title": "OVO — Fertility & Preparation Pathway",
+      "price": null,
+      "price_status": "approved_source_required",
+      "intake": "ovo_fertility_preparation_intake",
+      "description": "A preparation-for-life and fertility pathway for women, men, or couples who want to create a stronger foundation before or alongside their family-building journey. Female, male, and couple pathways remain individually routed.",
+      "invite_subject": "Your OVO pathway is ready"
+    },
+    "OYSTER": {
+      "title": "Oyster — Men's Vitality",
+      "price": null,
+      "price_status": "approved_source_required",
+      "intake": "oyster_mens_intake",
+      "description": "A precision wellness pathway for men focused on vitality, performance, recovery, body composition, sleep, longevity, and—when relevant—fertility.",
+      "invite_subject": "Your Precision Vitality Pathway is ready"
+    },
+    "VIBRANT_PETS": {
+      "title": "Vibrant Pets",
+      "price": null,
+      "price_status": "approved_source_required",
+      "intake": "vibrant_pets_species_lifestage_intake",
+      "description": "A personalized companion-animal nutrition and wellness pathway grounded in individual species, life stage, feeding pattern, lifestyle, and goals.",
+      "invite_subject": "Your Companion’s Wellness Pathway is ready"
+    },
+    "HEALTHIER_TOGETHER": {
+      "title": "Healthier Together — Household Wellness",
+      "price": null,
+      "price_status": "approved_source_required",
+      "intake": "healthier_together_household_intake",
+      "description": "A coordinated household wellness pathway built around the reality that health happens inside the home, while each person and pet remains individually routed according to their own needs.",
+      "invite_subject": "Your Household Wellness Pathway is ready"
+    }
+  },
+  "direct_routes": {
+    "DIRECT_CELLCORE": {
+      "action": "send_to_established_cellcore_patient_access_route",
+      "whole_practice_intake": false
+    },
+    "DIRECT_PEPTIDE": {
+      "action": "send_to_approved_peptide_route",
+      "whole_practice_intake": false
+    },
+    "DIRECT_PROGRAM": {
+      "action": "open_named_approved_program_destination",
+      "whole_practice_intake": true
+    }
+  },
+  "fallback": {
+    "route": "concierge_review",
+    "message": "I can help narrow this down. I just need a little more information before recommending the best place to begin.",
+    "never_guess": true
+  },
+  "downstream": {
+    "fullscript": "conditional",
+    "cellcore": "conditional",
+    "labs": "conditional",
+    "oova": "conditional",
+    "oura": "conditional",
+    "dietrx": "conditional",
+    "education": "conditional"
+  },
+  "automation": {
+    "capture": ["source", "channel", "intent", "destination", "status"],
+    "do_not_capture_in_marketing_layer": ["raw_health_answers", "clinical_notes", "sensitive_assessment_content"],
+    "lifecycle": ["new_lead", "gateway_started", "routed", "intake_sent", "intake_complete", "review_queue", "curated", "active", "reassessment", "completed_or_continued"]
+  }
+}
