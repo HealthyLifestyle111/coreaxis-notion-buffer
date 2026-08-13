@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Production payload for Whole Practice package creation, targeted intake assignment, DM routing, Zapier orchestration, and downstream fulfillment mapping.",
+  "non_negotiables": {
+    "cellular_cleanse_complimentary": true,
+    "cellcore_is_product_protocol_not_program_name": true,
+    "no_aminos": true,
+    "no_invented_prices": true,
+    "no_invented_durations": true,
+    "no_blanket_intake": true,
+    "gateway_is_routing_not_diagnosis": true,
+    "known_direct_intent_bypasses_discovery": true
+  },
+  "packages": [
+    {
+      "id": "cellular_cleanse",
+      "title": "Cellular Cleanse",
+      "price": 0,
+      "price_display": "Complimentary",
+      "description": "A practitioner-guided foundational cellular-support pathway for those who want to begin with a structured cleanse and foundational approach. Your starting assessment establishes the foundation for review; when this pathway is appropriate, the practitioner determines the appropriate next step and coordinates the relevant protocol and resources.",
+      "client_gets": [
+        "A complimentary starting pathway",
+        "The established starting assessment",
+        "Practitioner review of the information needed to determine whether a cleanse-first foundation is appropriate",
+        "A defined next step when the pathway is appropriate",
+        "Connection to relevant downstream resources when indicated"
+      ],
+      "intake": ["Core Wellness/Nutrition Assessment", "cleanse/detox assessment"],
+      "optional_intake": ["constitution/lifestyle assessment", "Food & Feeding/Flexible Food Log"],
+      "downstream": ["CellCore when appropriate", "Fullscript when appropriate", "Toxic Element Testing when indicated", "Comprehensive Wellness Panel when indicated", "Oura when appropriate", "doTERRA after review when appropriate"],
+      "next_routes": ["continue foundational support", "appropriate cellular/cleanse progression", "indicated lab/resource pathway", "appropriate CoreAxis program"],
+      "email_subject": "Your Cellular Cleanse pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour Cellular Cleanse pathway is ready. This is your complimentary starting point for a practitioner-guided foundational cleanse approach. Your starting assessment gives me what I need to determine the appropriate next step.\n\nClick below to begin."
+    },
+    {
+      "id": "pomegranate",
+      "title": "Pomegranate — Whole-Woman Foundations",
+      "price": null,
+      "description": "A curated whole-woman wellness pathway organized around your biology, life stage, lifestyle, and goals. Your targeted onboarding identifies the appropriate place to begin; fertility/preconception and menopause needs are routed into their dedicated pathways when indicated.",
+      "client_gets": ["Targeted whole-woman onboarding", "Personal practitioner review", "A prioritized pathway based on the information provided", "Only the downstream resources relevant to the selected pathway"],
+      "intake": ["Core Wellness/Nutrition Assessment", "female/woman-specific assessment appropriate to life stage"],
+      "optional_intake": ["constitution/lifestyle assessment", "Food & Feeding/Flexible Food Log"],
+      "routing": {"fertility_preconception": "ovo", "perimenopause_menopause": "menopause_core", "general_whole_woman_cycle_pms_vitality": "pomegranate"},
+      "downstream": ["CellCore when indicated", "Fullscript/approved Journeys when appropriate", "Oura when useful", "Oova when fertility/cycle tracking is relevant", "labs when indicated"],
+      "next_routes": ["Pomegranate continuation", "OVO", "Menopause Core", "other appropriate CoreAxis pathway"],
+      "email_subject": "Your Pomegranate pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour Pomegranate pathway is ready. This is your whole-woman starting point, with your next step determined from your goals, life stage, and the information you provide.\n\nClick below to begin."
+    },
+    {
+      "id": "menopause_core",
+      "title": "Menopause Core",
+      "price": null,
+      "description": "A dedicated midlife, perimenopause, and menopause pathway. This is a defined CoreAxis program built around the individual's goals, life stage, nutrition, lifestyle, and relevant objective information—not a generic supplement Journey.",
+      "client_gets": ["Menopause-specific onboarding", "Personal practitioner review", "A prioritized menopause support pathway", "Relevant downstream resources selected for the individual's pathway", "Reassessment and next-step determination"],
+      "intake": ["Core Wellness/Nutrition Assessment", "menopause/life-stage assessment"],
+      "optional_intake": ["constitution/lifestyle assessment", "Food & Feeding/Flexible Food Log"],
+      "downstream": ["CellCore when indicated", "Fullscript", "labs according to review", "Oura when useful"],
+      "next_routes": ["continue Menopause Core", "adjust fulfillment", "broader Pomegranate support", "another appropriate route"],
+      "email_subject": "Your Menopause Core pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour Menopause Core pathway is ready. Your focused onboarding gives me the information needed to determine your most appropriate starting point.\n\nClick below to begin."
+    },
+    {
+      "id": "ovo",
+      "title": "OVO — Fertility & Preparation Pathway",
+      "price": null,
+      "description": "A fertility and preparation-for-life pathway for women, men, or couples. The pathway keeps each individual appropriately routed while bringing fertility, nutrition, lifestyle, tracking, and relevant objective information into one coordinated preparation process.",
+      "client_gets": ["Fertility/preconception onboarding", "Individual or couple routing as appropriate", "Personal practitioner review", "A prioritized preparation pathway", "Relevant tracking, lab, nutrition and fulfillment resources when indicated"],
+      "intake": ["Core Wellness/Nutrition Assessment", "fertility/preconception assessment"],
+      "optional_intake": ["constitution/lifestyle assessment", "female-specific assessment", "male-specific assessment"],
+      "downstream": ["CellCore when appropriate", "Fullscript", "Oova for women when relevant", "Oura when useful", "fertility/preconception labs when indicated", "DietRx when individualized menu support is required"],
+      "next_routes": ["continue OVO", "deepen individualized curation", "appropriate individual/partner pathway"],
+      "email_subject": "Your OVO fertility pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour OVO pathway is ready. This is the fertility and preparation starting point for women, men, or couples, with each participant routed appropriately.\n\nClick below to begin."
+    },
+    {
+      "id": "oyster",
+      "title": "Oyster — Men's Vitality",
+      "price": null,
+      "description": "A men's vitality, performance, recovery, longevity, and fertility-aware wellness pathway. Your onboarding identifies the primary objective and keeps fertility-related goals routed to OVO when appropriate.",
+      "client_gets": ["Male-focused onboarding", "Personal practitioner review", "A prioritized vitality/performance/longevity pathway", "Relevant nutrition, tracking, laboratory and fulfillment resources when indicated"],
+      "intake": ["Core Wellness/Nutrition Assessment", "male-specific assessment"],
+      "optional_intake": ["constitution/lifestyle assessment"],
+      "routing": {"fertility_family_building": "ovo", "vitality_performance_recovery_longevity": "oyster"},
+      "downstream": ["CellCore when indicated", "Fullscript", "Oura when useful", "labs when indicated", "DietRx when individualized nutrition support is required"],
+      "next_routes": ["continue Oyster", "OVO for fertility", "appropriate CoreAxis service"],
+      "email_subject": "Your Oyster vitality pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour Oyster pathway is ready. This is your men's vitality starting point, with your goals determining the appropriate next step.\n\nClick below to begin."
+    },
+    {
+      "id": "vibrant_pets",
+      "title": "Vibrant Pets",
+      "price": null,
+      "description": "A personalized companion-animal nutrition and wellness pathway based on species, life stage, feeding pattern, lifestyle, and goals. The pathway is designed around the individual animal rather than a generic pet protocol.",
+      "client_gets": ["Species- and life-stage-specific onboarding", "Personal practitioner review", "Individualized feeding and wellness direction", "Relevant laboratory, nutrition and fulfillment resources when indicated"],
+      "intake": ["pet-specific nutrition/wellness assessment", "species and life-stage routing"],
+      "optional_intake": ["constitution/lifestyle assessment", "feeding data"],
+      "downstream": ["VDI Labs when appropriate", "pet CellCore only where an appropriate pathway exists and review supports it", "Fullscript where applicable", "DietRx when individualized feeding/menu design is required", "longitudinal tracking as appropriate"],
+      "next_routes": ["continue Vibrant Pets", "add indicated lab/nutrition support", "Healthier Together when household coordination is appropriate"],
+      "email_subject": "Your Vibrant Pets pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour Vibrant Pets pathway is ready. We'll begin with your companion's individual needs, species, life stage, feeding pattern, and goals.\n\nClick below to begin."
+    },
+    {
+      "id": "healthier_together",
+      "title": "Healthier Together — Household Wellness",
+      "price": null,
+      "description": "A coordinated household wellness pathway for humans and companion animals. The household is coordinated as one experience while every person and pet remains individually assessed and routed.",
+      "client_gets": ["Household onboarding", "Individual assessment for each participating human or pet", "Coordinated practitioner review", "Individual program routing", "Relevant downstream resources attached to the correct individual record"],
+      "intake": ["household relationship information", "each participant's appropriate human or pet assessment"],
+      "downstream": ["Pomegranate when appropriate", "OVO when appropriate", "Menopause Core when appropriate", "Oyster when appropriate", "Vibrant Pets when appropriate", "CellCore individually when appropriate", "Fullscript individually when appropriate", "DietRx when appropriate", "Oura/Oova for eligible human participants when relevant"],
+      "next_routes": ["individual continuation", "individual escalation/change of pathway", "continued household coordination"],
+      "email_subject": "Your Healthier Together pathway is ready",
+      "email_body": "Hi [First Name],\n\nYour Healthier Together pathway is ready. Your household will be coordinated as one experience while each person and pet remains individually routed.\n\nClick below to begin."
+    }
+  ],
+  "gateway": {
+    "name": "Core Access",
+    "headline": "Tell us what you're looking for. We'll take it from there.",
+    "questions": [
+      {"id":"intent","text":"Do you already know what you're looking for?","answers":["Yes — I know the program/product","No — I want help finding the right place to begin","I'm not sure"]},
+      {"id":"direct_intent","condition":"intent=Yes","text":"What are you looking for?","answers":["CellCore / JumpStart","Peptides","A named CoreAxis program","Something else"]},
+      {"id":"primary_goal","condition":"intent!=Yes OR direct_intent=Something else","text":"What would you most like support with right now?","answers":["My overall foundation / cleanse","Women's wellness","Menopause / midlife","Fertility / preparing for pregnancy","Men's vitality / performance / longevity","My pet","My household — people and pets","I'm not sure"]},
+      {"id":"woman_goal","condition":"primary_goal=Women's wellness","text":"Which is closest to what you need right now?","answers":["Whole-woman wellness / cycle / PMS / vitality","Fertility or preconception","Perimenopause / menopause","I'm not sure"]},
+      {"id":"man_goal","condition":"primary_goal=Men's vitality / performance / longevity","text":"Which is closest to what you need right now?","answers":["Vitality / performance / recovery / longevity","Fertility / family building","I'm not sure"]},
+      {"id":"foundation_choice","condition":"primary_goal=My overall foundation / cleanse","text":"Are you looking for direct CellCore access, or a practitioner-guided starting pathway?","answers":["I want CellCore / JumpStart","I want the practitioner-guided Cellular Cleanse starting pathway","I'm not sure"]}
+    ],
+    "routes": {
+      "CellCore / JumpStart":"DIRECT_CELLCORE",
+      "Peptides":"DIRECT_PEPTIDE",
+      "Women's wellness + Whole-woman":"POMEGRANATE",
+      "Women's wellness + Fertility":"OVO",
+      "Women's wellness + Menopause":"MENOPAUSE_CORE",
+      "Fertility":"OVO",
+      "Men's vitality + Vitality":"OYSTER",
+      "Men's vitality + Fertility":"OVO",
+      "Pet":"VIBRANT_PETS",
+      "Household":"HEALTHIER_TOGETHER",
+      "Foundation + Cellular Cleanse":"CELLULAR_CLEANSE",
+      "Unclear":"CONCIERGE_REVIEW"
+    }
+  },
+  "dm": {
+    "universal_opening": "Absolutely. I can help you find the right place to begin. You don't need to know which program you need. I just need to narrow down what you're looking for.",
+    "known_cellcore": "Absolutely. If you already know you want CellCore or JumpStart, I'll take you directly to the established CellCore route rather than sending you through a general wellness intake.",
+    "known_peptide": "Absolutely. If you're specifically looking for peptides, I'll take you directly to the appropriate peptide route.",
+    "gateway_cta": "FIND YOUR PATH",
+    "result": "Based on what you've shared, this is the best place to begin. You don't need to figure out the rest of the pathway today. We'll guide you from here.",
+    "fallback": "I want to make sure we put you in the right place rather than guess. I'll route this for concierge review so we can determine the appropriate starting point."
+  },
+  "automation": {
+    "events": ["dm_started", "gateway_started", "gateway_completed", "direct_route_selected", "program_route_selected", "client_created", "package_activated", "intake_assigned", "intake_completed", "review_ready", "review_completed", "fulfillment_attached", "reassessment_due", "continued_or_rerouted"],
+    "zapier_jobs": [
+      "DM/gateway result -> create/update lead record",
+      "direct CellCore intent -> established CellCore access route",
+      "direct peptide intent -> approved peptide route",
+      "program route -> Whole Practice client/package activation",
+      "package activation -> targeted intake assignment",
+      "intake completion -> practitioner review queue",
+      "review completion -> conditional downstream fulfillment",
+      "reassessment -> continuation/reroute state"
+    ],
+    "data_contract": ["source_channel", "entry_source", "intent", "route", "package", "client_status", "intake_status", "review_status", "fulfillment_status", "reassessment_status"],
+    "never_automate_as_default": ["clinical conclusions", "supplement prescriptions", "lab ordering without practitioner decision", "CellCore assignment without appropriate review", "one-size-fits-all fulfillment"]
+  },
+  "fullscript": {
+    "rule": "Map only live, verified practitioner catalog/Journey/product destinations from the connected Fullscript account. Never invent a Journey name, product collection, URL, or bundle.",
+    "package_mapping": {
+      "cellular_cleanse":"conditional", "pomegranate":"conditional", "menopause_core":"conditional", "ovo":"conditional", "oyster":"conditional", "vibrant_pets":"conditional", "healthier_together":"conditional"
+    }
+  },
+  "implementation_status": {
+    "content": "complete",
+    "routing_logic": "complete",
+    "dm_copy": "complete",
+    "automation_contract": "complete",
+    "whole_practice_live_records": "requires Whole Practice connector/action",
+    "live_dm_platform_deployment": "requires DM platform connector/action",
+    "live_zapier_deployment": "requires Zapier connector/action",
+    "live_fullscript_catalog_mapping": "requires Fullscript account access/action"
+  }
+}
