@@ -1,0 +1,53 @@
+{
+  "campaign_id":"elliemd",
+  "status":"LAUNCH_READY",
+  "purpose":"Conversational acquisition and sales funnel for the EllieMD campaign. This file is the source-of-truth build for DM logic, lead states, follow-up, attribution and QA.",
+  "voice":"premium, intelligent, warm, concise, concierge; never hype-driven",
+  "entry_points":["Instagram DM","Instagram comment trigger","Instagram Story reply","Facebook Messenger where connected","paid ad CTA","organic content CTA","website CTA"],
+  "source_fields":["platform","campaign_id","creative_id","entry_type","keyword","first_touch","last_touch"],
+  "opening":"Absolutely. I can help you find the right place to begin. What are you most interested in exploring?",
+  "interest_options":["Weight-management support","Recovery / performance","Longevity / vitality","Hormonal / midlife support","I already know which peptide/program I want","I'm not sure yet"],
+  "qualification_questions":[
+    "What is your primary goal right now?",
+    "Is this your first experience with this type of program, or have you used one before?",
+    "Are you looking for information first, or are you ready to explore the next step?"
+  ],
+  "routing":{
+    "known_offer":"approved EllieMD destination",
+    "uncertain":"concierge review",
+    "information_first":"education sequence then invitation",
+    "ready":"approved conversion destination"
+  },
+  "sales_message":"Based on what you've shared, I can point you toward the most appropriate place to begin. You don't need to sort through everything yourself.",
+  "cta":"EXPLORE YOUR NEXT STEP",
+  "lead_states":["NEW","ENGAGED","QUALIFYING","QUALIFIED","RECOMMENDATION_GIVEN","LINK_SENT","CLICKED","STARTED","CONVERTED","NURTURE","NO_RESPONSE","CONCIERGE","NOT_APPROPRIATE"],
+  "tags":["src:elliemd","intent:weight","intent:recovery","intent:longevity","intent:hormonal","intent:known_offer","intent:unknown","stage:new","stage:qualified","stage:hot","stage:warm","stage:nurture","stage:converted","handoff:human"],
+  "follow_up":{
+    "no_response":"Short reminder with assistance-first language; do not pressure.",
+    "clicked_not_started":"Answer likely friction point and return to CTA.",
+    "started_not_completed":"Offer help completing the next step.",
+    "not_ready":"Enter education/nurture sequence.",
+    "converted":"Remove from acquisition campaign and enter client journey."
+  },
+  "nurture":[
+    {"stage":"education","purpose":"clarify the problem and why individualized guidance matters"},
+    {"stage":"authority","purpose":"practitioner perspective and decision support"},
+    {"stage":"experience","purpose":"explain what the client experience looks like"},
+    {"stage":"invitation","purpose":"clear next-step CTA"}
+  ],
+  "compliance_guardrails":["No guaranteed outcomes","No diagnosis in DM automation","No individualized medical conclusion from AI","No unsupported peptide/health claims","Escalate clinical questions to practitioner","Use only approved live destination links and offer names"],
+  "handoff_triggers":["clinical question","side-effect question","contraindication question","complex personal situation","complaint","high-intent lead requesting human","AI uncertainty"],
+  "conversion_events":["dm_started","qualification_completed","recommendation_presented","cta_clicked","destination_started","purchase_or_activation_confirmed"],
+  "qa_cases":[
+    "new lead from ad",
+    "comment trigger",
+    "known offer request",
+    "uncertain prospect",
+    "information-only prospect",
+    "clinical question",
+    "no response",
+    "clicked but did not start",
+    "started but did not finish",
+    "converted lead removed from acquisition"
+  ]
+}
