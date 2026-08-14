@@ -10,9 +10,12 @@
     "release_only_relevant_intake": true,
     "cellular_cleanse_complimentary": true,
     "cellcore_is_backend_product_protocol_not_offer_name": true,
+    "cellcore_access_platform": "fullscript",
+    "fullscript_link_is_practitioner_owned": true,
     "aminos": false,
     "invented_duration": false,
-    "invented_price": false
+    "invented_price": false,
+    "invented_link": false
   },
   "entry": {
     "headline": "Tell us what you're looking for. We'll take it from there.",
@@ -139,9 +142,12 @@
   },
   "direct_routes": {
     "DIRECT_CELLCORE": {
-      "action": "send_to_established_cellcore_patient_access_route",
+      "action": "send_to_fullscript_direct_link",
+      "link_source": "practitioner_fullscript_account",
+      "link_key": "FULLSCRIPT_CELLCORE_LINK",
+      "link_required_before_publish": true,
       "whole_practice_intake": true,
-      "sequence": "whole_practice_client_entry_then_foundation_assessment_then_practitioner_review_then_cellcore_specific_assessment_information_then_pathway_explanation_then_appropriate_cellcore_option"
+      "sequence": "whole_practice_client_entry_then_foundation_assessment_then_practitioner_review_then_cellcore_specific_assessment_information_then_fullscript_direct_link_to_complete_the_applicable_program_or_order"
     },
     "DIRECT_PEPTIDE": {
       "action": "send_to_approved_peptide_route",
@@ -158,7 +164,7 @@
     "never_guess": true
   },
   "downstream": {
-    "fullscript": "conditional",
+    "fullscript": "required_for_cellcore_route",
     "cellcore": "conditional",
     "labs": "conditional",
     "oova": "conditional",
