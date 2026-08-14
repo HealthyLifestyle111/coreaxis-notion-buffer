@@ -140,7 +140,8 @@
   "direct_routes": {
     "DIRECT_CELLCORE": {
       "action": "send_to_established_cellcore_patient_access_route",
-      "whole_practice_intake": false
+      "whole_practice_intake": true,
+      "sequence": "whole_practice_client_entry_then_foundation_assessment_then_practitioner_review_then_cellcore_specific_assessment_information_then_pathway_explanation_then_appropriate_cellcore_option"
     },
     "DIRECT_PEPTIDE": {
       "action": "send_to_approved_peptide_route",
