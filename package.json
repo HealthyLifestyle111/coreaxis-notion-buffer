@@ -5,6 +5,8 @@
   "scripts": {
     "bootstrap": "node orchestrator/bootstrap.js",
     "test": "node --test",
+    "test:gateway": "node --test gateway/test-router.js",
+    "gateway": "node gateway/router.js",
     "verify:production": "node orchestrator/verify-production.js",
     "campaign": "node orchestrator/bootstrap.js && node orchestrator/run-campaign.js",
     "campaign:lane": "node orchestrator/bootstrap.js && node orchestrator/run-campaign-lane.js",
