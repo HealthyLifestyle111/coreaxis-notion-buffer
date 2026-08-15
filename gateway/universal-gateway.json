@@ -1,0 +1,44 @@
+{
+  "version": "2026-08-15.1",
+  "source_of_truth": "Notion: Program Architecture System + CORE ACCESS — Universal Gateway + DM Conversion System — Production Build",
+  "purpose": "Universal consumer gateway, qualification, routing, fulfillment handoff and partner attribution.",
+  "principles": {
+    "one_primary_route": true,
+    "consumer_does_not_choose_internal_program": true,
+    "investment_does_not_change_wellness_need": true,
+    "no_free_1_to_1": true,
+    "no_raw_health_data_to_notion": true,
+    "cellcore_requires_whole_practice_first": true,
+    "peptide_direct_route_preserved": true
+  },
+  "questions": [
+    {"id":"known_intent","question":"Do you already know exactly what you want?","options":["peptide","cellcore","known_program","not_sure"]},
+    {"id":"primary_area","question":"What are you looking for?","options":["women","midlife","fertility","men","pet","household","foundational","unsure"]},
+    {"id":"scope","question":"Is this primarily about you, fertility with a partner, your pet, or your household?","options":["me","partner_fertility","pet","household"]},
+    {"id":"life_stage","question":"If relevant, which best describes your current stage or objective?","options":["whole_woman","cycle","fertility_preconception","perimenopause_menopause","male_vitality","pet_wellness","household_wellness","foundational"]},
+    {"id":"guidance","question":"How would you like to be supported?","options":["self_directed","structured","practitioner_guided","not_sure"]},
+    {"id":"investment_readiness","question":"Which best describes what you are comfortable investing in right now?","options":["resources_only","entry_level_program","guided_program","higher_touch","not_sure"]},
+    {"id":"time_commitment","question":"How much time are you realistically willing to give this?","options":["minimal","steady","meaningful","not_sure"]},
+    {"id":"permission","question":"Would you like us to use these answers to recommend the best starting point rather than showing you a menu of programs?","options":["yes","no"]}
+  ],
+  "routes": {
+    "DIRECT_PEPTIDE": {"type":"external", "destination_env":"ELLIE_MD_DIRECT_URL"},
+    "CELLULAR_CLEANSE": {"type":"whole_practice", "destination_env":"WHOLE_PRACTICE_GATEWAY_URL"},
+    "POMEGRANATE": {"type":"whole_practice", "destination_env":"POMEGRANATE_URL"},
+    "MENOPAUSE_CORE": {"type":"whole_practice", "destination_env":"MENOPAUSE_CORE_URL"},
+    "OVO": {"type":"whole_practice", "destination_env":"OVO_URL"},
+    "OYSTER": {"type":"whole_practice", "destination_env":"OYSTER_URL"},
+    "VIBRANT_PETS": {"type":"whole_practice", "destination_env":"VIBRANT_PETS_URL"},
+    "HEALTHIER_TOGETHER": {"type":"whole_practice", "destination_env":"HEALTHIER_TOGETHER_URL"},
+    "FOUNDATION_EXPERIENCE": {"type":"whole_practice", "destination_env":"WHOLE_PRACTICE_GATEWAY_URL"}
+  },
+  "fallbacks": {
+    "resources_only": ["FULLSCRIPT_SELF_DIRECTED_URL","DOTERRA_SELF_DIRECTED_URL","SHOP_COMING_SOON_URL"],
+    "not_ready": ["FULLSCRIPT_SELF_DIRECTED_URL","DOTERRA_SELF_DIRECTED_URL","SHOP_COMING_SOON_URL"]
+  },
+  "attribution": {
+    "required_fields":["source","campaign","partner_id","clinic_id","utm_source","utm_medium","utm_campaign","utm_content"],
+    "persist_in_hidden_fields":true,
+    "never_send_health_answers_to_marketing":true
+  }
+}
