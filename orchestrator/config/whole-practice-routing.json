@@ -142,7 +142,8 @@
   },
   "direct_routes": {
     "DIRECT_CELLCORE": {
-      "action": "send_to_fullscript_direct_link",
+      "action": "create_or_update_whole_practice_client_then_release_foundation_experience_before_cellcore",
+      "downstream": "cellcore_specific_assessment_after_foundation_review",
       "link_source": "practitioner_fullscript_account",
       "link_key": "FULLSCRIPT_CELLCORE_LINK",
       "link_required_before_publish": true,
