@@ -9,7 +9,7 @@ export const integrations = [
   { id: 'youtube', label: 'YouTube Shorts', required: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN'], action: 'Authorize YouTube upload access and add the OAuth credentials.' },
   { id: 'linkedin', label: 'LinkedIn', required: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_AUTHOR_URN'], action: 'Authorize LinkedIn publishing and add the author URN.' },
   { id: 'render-hook', label: 'Automatic redeployment', required: ['RENDER_DEPLOY_HOOK_URL'], action: 'Create a Render deploy hook and save it as a GitHub secret.' },
-  { id: 'video', label: 'AI video rendering', alternatives: [['RUNWAY_API_KEY'], ['KLING_API_KEY'], ['VEO_API_KEY']], action: 'Connect at least one supported AI video provider account.' },
+  { id: 'video', label: 'AI video rendering', alternatives: [['VIDEO_RENDER_WEBHOOK_URL'], ['RUNWAY_API_KEY'], ['KLING_API_KEY'], ['VEO_API_KEY']], action: 'Connect the production video renderer. Preferred route: Zapier Catch Hook → HeyGen.' },
   { id: 'wix', label: 'Wix website synchronization', alternatives: [['WIX_API_KEY', 'WIX_SITE_ID'], ['WIX_ACCOUNT_ID', 'WIX_SITE_ID']], action: 'Authorize Wix site access and provide the site ID.' },
 ];
 
