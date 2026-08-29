@@ -6,10 +6,10 @@ export const integrations = [
   { id: 'notion', label: 'Notion campaign source', required: ['NOTION_TOKEN'], action: 'Add the Notion integration token.' },
   { id: 'buffer', label: 'Buffer publishing', required: ['BUFFER_API_KEY'], action: 'Add the Buffer API key.' },
   { id: 'meta', label: 'Instagram and Facebook', required: ['META_ACCESS_TOKEN', 'META_PAGE_ID', 'META_IG_USER_ID'], action: 'Authorize the Meta app and add Page and Instagram account IDs.' },
-  { id: 'youtube', label: 'YouTube Shorts', required: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN'], action: 'Authorize YouTube upload access and add the OAuth credentials.' },
+  { id: 'youtube', label: 'YouTube Shorts', required: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN'], action: 'Authorize YouTube upload access and add the author credentials.' },
   { id: 'linkedin', label: 'LinkedIn', required: ['LINKEDIN_ACCESS_TOKEN', 'LINKEDIN_AUTHOR_URN'], action: 'Authorize LinkedIn publishing and add the author URN.' },
   { id: 'render-hook', label: 'Automatic redeployment', required: ['RENDER_DEPLOY_HOOK_URL'], action: 'Create a Render deploy hook and save it as a GitHub secret.' },
-  { id: 'video', label: 'AI video rendering', alternatives: [['VIDEO_RENDER_WEBHOOK_URL'], ['RUNWAY_API_KEY'], ['KLING_API_KEY'], ['VEO_API_KEY']], action: 'Connect the production video renderer. Preferred route: Zapier Catch Hook → HeyGen.' },
+  { id: 'video', label: 'AI video rendering', alternatives: [['VIDEO_RENDER_WEBHOOK_URL'], ['RUNWAY_API_KEY'], ['KLING_API_KEY'], ['VEO_API_KEY']], action: 'Connect the configured production video renderer.' },
   { id: 'wix', label: 'Wix website synchronization', alternatives: [['WIX_API_KEY', 'WIX_SITE_ID'], ['WIX_ACCOUNT_ID', 'WIX_SITE_ID']], action: 'Authorize Wix site access and provide the site ID.' },
 ];
 
