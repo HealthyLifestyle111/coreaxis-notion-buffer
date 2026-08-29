@@ -1,0 +1,14 @@
+{
+  "id": "{{video_job_id}}",
+  "brand": "core_axis_longevity",
+  "concept": {
+    "title": "{{title}}",
+    "hook": "{{hook}}",
+    "videoPrompt": "{{video_prompt}}",
+    "scenes": "{{scenes}}"
+  },
+  "captions": "{{captions}}",
+  "audio": "{{audio}}",
+  "aspectRatio": "9:16",
+  "callback": "{{coreaxis_callback_url}}"
+}
