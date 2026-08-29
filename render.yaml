@@ -16,6 +16,10 @@ services:
         value: coreaxis
       - key: COREAXIS_ADMIN_PASSWORD
         generateValue: true
+      - key: VIDEO_RENDER_WEBHOOK_URL
+        sync: false
+      - key: VIDEO_RENDER_WEBHOOK_TOKEN
+        sync: false
     disk:
       name: coreaxis-data
       mountPath: /var/lib/coreaxis
