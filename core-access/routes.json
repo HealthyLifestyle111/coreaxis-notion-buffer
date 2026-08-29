@@ -1,0 +1,23 @@
+{
+  "routes": {
+    "peptide_direct": {"label":"Direct peptide access","action":"DIRECT_ELLIE_MD","direct":true,"whole_practice":false},
+    "cellcore_direct": {"label":"Direct CellCore / JumpStart","action":"DIRECT_CELLCORE","direct":true,"whole_practice":false},
+    "cellular_cleanse": {"label":"Cellular Cleanse","action":"BEGIN_CELLULAR_CLEANSE_ASSESSMENT","direct":false,"whole_practice":true},
+    "pomegranate": {"label":"Pomegranate — Whole Woman Foundations","action":"BEGIN_POMEGRANATE","direct":false,"whole_practice":true},
+    "menopause_core": {"label":"Menopause Core","action":"EXPLORE_MENOPAUSE_CORE","direct":false,"whole_practice":true},
+    "ovo": {"label":"OVO — Fertility & Preparation","action":"BEGIN_OVO","direct":false,"whole_practice":true},
+    "oyster": {"label":"Oyster — Men’s Vitality","action":"BEGIN_OYSTER","direct":false,"whole_practice":true},
+    "vibrant_pets": {"label":"Vibrant Pets","action":"BEGIN_VIBRANT_PETS","direct":false,"whole_practice":true},
+    "healthier_together": {"label":"Healthier Together","action":"BEGIN_HEALTHIER_TOGETHER","direct":false,"whole_practice":true},
+    "concierge_review": {"label":"Concierge Review","action":"HUMAN_REVIEW","direct":false,"whole_practice":false}
+  },
+  "intake_map": {
+    "cellular_cleanse":"core_wellness + cleanse_detox",
+    "pomegranate":"core_wellness + female_life_stage",
+    "menopause_core":"core_wellness + menopause_life_stage",
+    "ovo":"core_wellness + fertility_preconception",
+    "oyster":"core_wellness + male_wellness",
+    "vibrant_pets":"pet_nutrition_wellness",
+    "healthier_together":"household_core + individual_routes"
+  }
+}
